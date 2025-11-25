@@ -1,0 +1,22 @@
+{
+  "name": "investment-matchmaker",
+  "version": "0.0.0",
+  "private": true,
+  "homepage": "https://mleggo1.github.io/Investment-Matchmaker/",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "recharts": "^2.12.3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.2",
+    "gh-pages": "^6.0.0"
+  }
+}
