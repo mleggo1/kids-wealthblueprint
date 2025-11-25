@@ -224,7 +224,7 @@ const KidsWealthBlueprint: React.FC = () => {
               <input
                 type="range"
                 min="25"
-                max="100000"
+                max="5000"
                 step="25"
                 value={monthlyAmount}
                 onChange={(e) => setMonthlyAmount(Number(e.target.value))}
@@ -243,16 +243,20 @@ const KidsWealthBlueprint: React.FC = () => {
                     } else {
                       const num = Number(numericValue);
                       if (!isNaN(num) && num >= 0) {
-                        setMonthlyAmount(num);
+                        setMonthlyAmount(Math.min(5000, num));
                       }
                     }
                   }}
                   onFocus={() => setMonthlyInputFocused(true)}
-                  onBlur={() => setMonthlyInputFocused(false)}
+                  onBlur={() => {
+                    setMonthlyInputFocused(false);
+                    if (monthlyAmount > 5000) setMonthlyAmount(5000);
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.currentTarget.blur();
                       setMonthlyInputFocused(false);
+                      if (monthlyAmount > 5000) setMonthlyAmount(5000);
                     }
                   }}
                   className="flex-1 min-w-0 text-2xl font-bold text-blue-600 text-center border-2 border-blue-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500 input-interactive"
@@ -260,7 +264,7 @@ const KidsWealthBlueprint: React.FC = () => {
               </div>
               <div className="flex justify-between mt-2 text-xs text-gray-500">
                 <span>$25</span>
-                <span>Any amount</span>
+                <span>$5,000</span>
               </div>
             </div>
 
@@ -271,7 +275,7 @@ const KidsWealthBlueprint: React.FC = () => {
               <input
                 type="range"
                 min="5"
-                max="12"
+                max="20"
                 step="0.5"
                 value={annualReturn}
                 onChange={(e) => setAnnualReturn(Number(e.target.value))}
@@ -281,10 +285,10 @@ const KidsWealthBlueprint: React.FC = () => {
                 <input
                   type="number"
                   min="5"
-                  max="12"
+                  max="20"
                   step="0.5"
                   value={annualReturn}
-                  onChange={(e) => setAnnualReturn(Math.max(5, Math.min(12, Number(e.target.value))))}
+                  onChange={(e) => setAnnualReturn(Math.max(5, Math.min(20, Number(e.target.value))))}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.currentTarget.blur();
@@ -296,7 +300,7 @@ const KidsWealthBlueprint: React.FC = () => {
               </div>
               <div className="flex justify-between mt-2 text-xs text-gray-500">
                 <span>5%</span>
-                <span>12%</span>
+                <span>20%</span>
               </div>
             </div>
 
