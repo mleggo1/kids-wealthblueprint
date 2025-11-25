@@ -187,7 +187,7 @@ const KidsWealthBlueprint: React.FC = () => {
               </label>
               <input
                 type="range"
-                min="5"
+                min="0"
                 max="25"
                 step="1"
                 value={startAge}
@@ -200,11 +200,11 @@ const KidsWealthBlueprint: React.FC = () => {
               />
               <input
                 type="number"
-                min="5"
+                min="0"
                 max="25"
                 value={startAge}
                 onChange={(e) => {
-                  const age = Math.max(5, Math.min(25, Number(e.target.value)));
+                  const age = Math.max(0, Math.min(25, Number(e.target.value)));
                   setStartAge(age);
                   if (age > targetAge) setTargetAge(age);
                 }}
