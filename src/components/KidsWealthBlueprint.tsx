@@ -131,16 +131,16 @@ const KidsWealthBlueprint: React.FC = () => {
       </section>
 
       {/* Why This Matters */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 sm:p-8 shadow-lg border border-gray-100 card-interactive">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">Kids Wealth Blueprint — Why This Matters</h2>
-          <div className="max-w-4xl mx-auto space-y-3 text-base text-gray-700 leading-relaxed">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg border border-gray-100 card-interactive">
+          <h2 className="text-xl font-bold text-gray-900 mb-3 text-center">Kids Wealth Blueprint — Why This Matters</h2>
+          <div className="max-w-4xl mx-auto space-y-2 text-sm text-gray-700 leading-snug">
             <p>
               Most people drift through life with money — earn it, spend it, save what's left, and hope for the best. 
               By their 40s and 50s, they're stressed and wishing they'd started earlier.
             </p>
             
-            <p className="text-lg font-semibold text-gray-900">
+            <p className="text-base font-semibold text-gray-900">
               This blueprint gives your kids a better path.
             </p>
             
@@ -148,7 +148,7 @@ const KidsWealthBlueprint: React.FC = () => {
               It's simple, long-term, and doesn't rely on picking winning stocks. It teaches the real secret:
             </p>
             
-            <ul className="space-y-1 list-disc list-inside ml-4">
+            <ul className="space-y-0.5 list-disc list-inside ml-4 text-sm">
               <li>start early</li>
               <li>stay consistent</li>
               <li>let compounding do the work</li>
@@ -159,9 +159,9 @@ const KidsWealthBlueprint: React.FC = () => {
               Money becomes something they understand — not something they fear.
             </p>
             
-            <div className="bg-blue-50 rounded-xl p-4 border-l-4 border-blue-600 mt-4">
-              <p className="text-lg font-semibold text-gray-900 mb-1">And the best part?</p>
-              <p className="text-base text-gray-800">
+            <div className="bg-blue-50 rounded-xl p-3 border-l-4 border-blue-600 mt-2">
+              <p className="text-base font-semibold text-gray-900 mb-0.5">And the best part?</p>
+              <p className="text-sm text-gray-800">
                 It's easy enough for a teenager to follow… yet powerful enough to shape their entire financial future.
               </p>
             </div>
@@ -688,7 +688,9 @@ const KidsWealthBlueprint: React.FC = () => {
             If you'd like help designing a personalised Kids Wealth Blueprint for your family, let's talk.
           </p>
           <a
-            href="#"
+            href="https://wealthbydesign.vercel.app/contact"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-block bg-white text-blue-600 font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
           >
             Book a Kids Wealth Blueprint Session
