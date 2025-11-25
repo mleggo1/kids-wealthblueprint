@@ -136,8 +136,7 @@ const KidsWealthBlueprint: React.FC = () => {
           <h2 className="text-xl font-bold text-gray-900 mb-3 text-center">Kids Wealth Blueprint — Why This Matters</h2>
           <div className="max-w-4xl mx-auto space-y-2 text-sm text-gray-700 leading-snug">
             <p>
-              Most people drift through life with money — earn it, spend it, save what's left, and hope for the best. 
-              By their 40s and 50s, they're stressed and wishing they'd started earlier.
+              Give your kids the gift most adults wish they had — a clear, confident start with money. Show them the magic of starting early, so they grow up empowered instead of stressed or wishing someone had taught them sooner.
             </p>
             
             <p className="text-base font-semibold text-gray-900">
