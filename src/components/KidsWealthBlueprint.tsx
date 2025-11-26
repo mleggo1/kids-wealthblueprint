@@ -16,30 +16,50 @@ const Icon = ({ emoji, className = '' }: { emoji: string; className?: string }) 
   <span className={`text-4xl ${className}`}>{emoji}</span>
 );
 
-// Compounding calculator
+// Compounding calculator with optional age-based contribution schedule
 const calculateCompound = (
   startAge: number,
   monthlyAmount: number,
   years: number,
-  annualReturn: number
+  annualReturn: number,
+  contributionSchedule?: Array<{ age: number; amount: number }>
 ): Array<{ age: number; total: number; contributed: number; growth: number }> => {
   const data = [];
   let balance = 0;
+  let totalContributed = 0;
   const monthlyReturn = annualReturn / 100 / 12;
   const totalMonths = years * 12;
 
-  for (let month = 0; month <= totalMonths; month++) {
-    if (month > 0) {
-      balance = balance * (1 + monthlyReturn) + monthlyAmount;
+  // Helper to get monthly amount at a specific age
+  const getMonthlyAmountAtAge = (age: number): number => {
+    if (!contributionSchedule || contributionSchedule.length === 0) {
+      return monthlyAmount;
     }
-    const contributed = monthlyAmount * month;
-    const growth = balance - contributed;
+    // Sort schedule by age and find the most recent applicable amount
+    const sorted = [...contributionSchedule].sort((a, b) => b.age - a.age);
+    for (const entry of sorted) {
+      if (age >= entry.age) {
+        return entry.amount;
+      }
+    }
+    return monthlyAmount; // Default to base amount
+  };
+
+  for (let month = 0; month <= totalMonths; month++) {
+    const currentAge = startAge + month / 12;
+    const currentMonthlyAmount = getMonthlyAmountAtAge(currentAge);
+    
+    if (month > 0) {
+      balance = balance * (1 + monthlyReturn) + currentMonthlyAmount;
+      totalContributed += currentMonthlyAmount;
+    }
+    const growth = balance - totalContributed;
 
     if (month % 12 === 0) {
       data.push({
-        age: startAge + month / 12,
+        age: currentAge,
         total: Math.round(balance),
-        contributed: Math.round(contributed),
+        contributed: Math.round(totalContributed),
         growth: Math.round(growth),
       });
     }
@@ -49,50 +69,150 @@ const calculateCompound = (
 
 const KidsWealthBlueprint: React.FC = () => {
   // Interactive chart state
-  const [startAge, setStartAge] = useState(18);
-  const [monthlyAmount, setMonthlyAmount] = useState(200);
+  const [startAge, setStartAge] = useState(0);
+  const [monthlyAmount, setMonthlyAmount] = useState(100);
   const [annualReturn, setAnnualReturn] = useState(8.0);
-  const [targetAge, setTargetAge] = useState(50);
+  const [targetAge, setTargetAge] = useState(28);
   const [monthlyInputFocused, setMonthlyInputFocused] = useState(false);
+  
+  // Advanced contribution schedule (collapsible)
+  const [showAdvancedContributions, setShowAdvancedContributions] = useState(false);
+  const [contributionSchedule, setContributionSchedule] = useState<Array<{ age: number; amount: number }>>([]);
+  const [focusedContributionIndex, setFocusedContributionIndex] = useState<number | null>(null);
+  
+  // Reset contribution schedule when opening the advanced section
+  const handleToggleAdvancedContributions = () => {
+    if (!showAdvancedContributions) {
+      // Opening - reset to empty
+      setContributionSchedule([]);
+      setFocusedContributionIndex(null);
+    }
+    setShowAdvancedContributions(!showAdvancedContributions);
+  };
 
   // Calculate chart data
   const chartData = useMemo(() => {
     const years = Math.max(1, targetAge - startAge);
-    return calculateCompound(startAge, monthlyAmount, years, annualReturn);
-  }, [startAge, monthlyAmount, annualReturn, targetAge]);
+    // Use contribution schedule only if advanced section is open and has entries
+    const schedule = showAdvancedContributions && contributionSchedule.length > 0 
+      ? contributionSchedule 
+      : undefined;
+    return calculateCompound(startAge, monthlyAmount, years, annualReturn, schedule);
+  }, [startAge, monthlyAmount, annualReturn, targetAge, showAdvancedContributions, contributionSchedule]);
 
   const finalAmount = chartData[chartData.length - 1]?.total || 0;
   const totalContributed = chartData[chartData.length - 1]?.contributed || 0;
   const totalGrowth = chartData[chartData.length - 1]?.growth || 0;
 
-  // Calculate max value for Y-axis - always show next tick above max
+  // Calculate max value for Y-axis - always show next tick above max, maximizing chart space
   const maxValue = useMemo(() => {
+    if (chartData.length === 0) return 1000000; // Default if no data
+    
     const max = Math.max(...chartData.map(d => Math.max(d.total, d.contributed)));
     
-    if (max === 0) return 1000000; // Default if no data
+    if (max === 0) return 1000000;
     
-    // Calculate next logical tick based on magnitude
+    // Calculate next logical tick that's just above max to maximize chart space
     if (max >= 1000000) {
-      // For millions, round up to next 0.5M or 1M increment
+      // For millions, round up to next logical increment
       const millions = max / 1000000;
-      if (millions <= 1) return 2000000; // $2M
-      if (millions <= 2) return 3000000; // $3M
+      // Round up to next 0.2M, 0.5M, or 1M increment based on value
+      if (millions <= 0.2) return 500000; // $0.5M
+      if (millions <= 0.5) return 1000000; // $1M
+      if (millions <= 1) return 1500000; // $1.5M
+      if (millions <= 1.5) return 2000000; // $2M
+      if (millions <= 2) return 2500000; // $2.5M
+      if (millions <= 2.5) return 3000000; // $3M
       if (millions <= 3) return 4000000; // $4M
       if (millions <= 4) return 5000000; // $5M
       if (millions <= 5) return 6000000; // $6M
       if (millions <= 6) return 8000000; // $8M
       if (millions <= 8) return 10000000; // $10M
-      // For larger values, round up to next 2M increment
-      return Math.ceil(millions / 2) * 2 * 1000000;
+      if (millions <= 10) return 12000000; // $12M
+      if (millions <= 12) return 15000000; // $15M
+      if (millions <= 15) return 20000000; // $20M
+      // For larger values, round up to next 5M increment
+      return Math.ceil(millions / 5) * 5 * 1000000;
+    } else if (max >= 100000) {
+      // For hundreds of thousands, calculate tight cap to maximize chart space
+      // Add only 8-12% padding above max, then round up to nearest 10k
+      const padding = 1.10; // 10% above max for minimal padding
+      const preciseCap = max * padding;
+      // Round up to nearest 10k increment
+      const roundedCap = Math.ceil(preciseCap / 10000) * 10000;
+      return roundedCap;
+    } else if (max >= 10000) {
+      // For tens of thousands, add 10% padding and round up to nearest 5k or 10k
+      const padding = 1.10;
+      const preciseCap = max * padding;
+      // Round up to nearest 5k, then to 10k if needed
+      const roundedCap = Math.ceil(preciseCap / 5000) * 5000;
+      // If it's close to a 10k boundary, round to 10k for cleaner ticks
+      if (roundedCap % 10000 < 2000) {
+        return Math.ceil(preciseCap / 10000) * 10000;
+      }
+      return roundedCap;
     } else if (max >= 1000) {
-      // For thousands, round up to next 100k increment
-      const thousands = max / 1000;
-      return Math.ceil(thousands / 100) * 100 * 1000;
+      // For thousands, add 10% padding and round up to nearest 1k
+      const padding = 1.10;
+      const preciseCap = max * padding;
+      return Math.ceil(preciseCap / 1000) * 1000;
     } else {
-      // For smaller values, round up to next 10k increment
-      return Math.ceil(max / 10000) * 10000;
+      // For smaller values, add 10% padding and round up to nearest 100
+      const padding = 1.10;
+      const preciseCap = max * padding;
+      return Math.ceil(preciseCap / 100) * 100;
     }
   }, [chartData]);
+
+  // Calculate Y-axis ticks using $10k increments, auto-scaling to $20k if crowded
+  const yAxisTicks = useMemo(() => {
+    if (maxValue === 0) return [0, 1000000];
+    
+    // Start with $10k increments
+    let increment = 10000;
+    
+    // For values >= $100k, use $10k increments, but auto-scale to $20k if too many ticks
+    if (maxValue >= 100000) {
+      // Check how many ticks we'd get with $10k increments
+      const numTicksWith10k = Math.floor(maxValue / 10000) + 1;
+      // If more than 12 ticks, use $20k increments instead
+      if (numTicksWith10k > 12) {
+        increment = 20000;
+      }
+    } else if (maxValue >= 10000) {
+      // For $10k-$100k range, use $5k increments, scale to $10k if crowded
+      increment = 5000;
+      const numTicksWith5k = Math.floor(maxValue / 5000) + 1;
+      if (numTicksWith5k > 12) {
+        increment = 10000;
+      }
+    } else if (maxValue >= 1000) {
+      // For $1k-$10k range, use $1k increments, scale to $2k if crowded
+      increment = 1000;
+      const numTicksWith1k = Math.floor(maxValue / 1000) + 1;
+      if (numTicksWith1k > 12) {
+        increment = 2000;
+      }
+    } else {
+      // For smaller values, use $100 increments, scale to $200 if crowded
+      increment = 100;
+      const numTicksWith100 = Math.floor(maxValue / 100) + 1;
+      if (numTicksWith100 > 12) {
+        increment = 200;
+      }
+    }
+    
+    // Generate ticks from 0 to maxValue using the increment
+    const ticks = [0];
+    let current = increment;
+    while (current < maxValue) {
+      ticks.push(current);
+      current += increment;
+    }
+    ticks.push(maxValue); // Always include maxValue at the top
+    return ticks;
+  }, [maxValue]);
 
   return (
     <div className="min-h-screen animated-gradient relative overflow-hidden">
@@ -158,10 +278,17 @@ const KidsWealthBlueprint: React.FC = () => {
               Money becomes something they understand — not something they fear.
             </p>
             
+            <p>
+              This money could be used for their first car, their first home, starting a business, 
+              traveling the world, or simply having the freedom to make choices without financial stress. 
+              It helps set them up for life — giving them options, security, and the confidence to 
+              pursue their dreams. That's a really positive thing.
+            </p>
+            
             <div className="bg-blue-50 rounded-xl p-3 border-l-4 border-blue-600 mt-2">
               <p className="text-lg font-semibold text-gray-900 mb-0.5">And the best part?</p>
               <p className="text-base text-gray-800">
-                It's easy enough for a teenager to follow… yet powerful enough to shape their entire financial future.
+                It's easy enough for your kids to follow… yet powerful enough to shape their entire financial future.
               </p>
             </div>
           </div>
@@ -198,12 +325,22 @@ const KidsWealthBlueprint: React.FC = () => {
                 className="w-full h-4 bg-purple-200 rounded-lg appearance-none cursor-pointer accent-purple-600 mb-3 transition-all duration-300 hover:accent-purple-700"
               />
               <input
-                type="number"
-                min="0"
-                max="25"
+                type="text"
                 value={startAge}
                 onChange={(e) => {
-                  const age = Math.max(0, Math.min(25, Number(e.target.value)));
+                  const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                  if (numericValue === '') {
+                    setStartAge(0);
+                  } else {
+                    const age = Number(numericValue);
+                    if (!isNaN(age)) {
+                      setStartAge(age);
+                      if (age > targetAge) setTargetAge(age);
+                    }
+                  }
+                }}
+                onBlur={(e) => {
+                  const age = Math.max(0, Math.min(25, Number(e.target.value) || 0));
                   setStartAge(age);
                   if (age > targetAge) setTargetAge(age);
                 }}
@@ -265,6 +402,174 @@ const KidsWealthBlueprint: React.FC = () => {
                 <span>$25</span>
                 <span>$5,000</span>
               </div>
+              
+              {/* Collapsible Advanced Contribution Schedule */}
+              <div className="mt-4 pt-4 border-t border-blue-200">
+                <button
+                  onClick={handleToggleAdvancedContributions}
+                  className="w-full flex items-center justify-between text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                >
+                  <span className="flex items-center gap-2">
+                    <span>⚙️</span>
+                    <span>Adjust contributions by age?</span>
+                  </span>
+                  <span className={`transform transition-transform duration-200 ${showAdvancedContributions ? 'rotate-180' : ''}`}>
+                    ▼
+                  </span>
+                </button>
+                
+                {showAdvancedContributions && (
+                  <div className="mt-4 space-y-3 animate-in slide-in-from-top-2 duration-200">
+                    <p className="text-xs text-gray-600 mb-3">
+                      <strong>Optional:</strong> Set different contribution amounts at different ages. For example, parents might contribute $100 a month until age 18. And then the child increases it to $400 a month when they start working.
+                    </p>
+                    {contributionSchedule.map((entry, index) => (
+                      <div key={index} className="bg-blue-50 rounded-lg p-3 relative">
+                        <div className="space-y-2">
+                          <div>
+                            <label className="block text-xs text-gray-700 font-medium mb-1">
+                              At age:
+                            </label>
+                            <input
+                              type="text"
+                              tabIndex={index * 2 + 1}
+                              value={entry.age}
+                              onChange={(e) => {
+                                const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                                if (numericValue === '') {
+                                  const updated = [...contributionSchedule];
+                                  updated[index] = { ...updated[index], age: startAge };
+                                  setContributionSchedule(updated);
+                                } else {
+                                  const age = Number(numericValue);
+                                  if (!isNaN(age)) {
+                                    const updated = [...contributionSchedule];
+                                    updated[index] = { ...updated[index], age: age };
+                                    setContributionSchedule(updated);
+                                  }
+                                }
+                              }}
+                              onBlur={(e) => {
+                                // Calculate min age: startAge for first entry, previous entry's age for others
+                                const minAge = index === 0 
+                                  ? startAge 
+                                  : Math.max(startAge, contributionSchedule[index - 1].age);
+                                
+                                // Calculate max age: next entry's age (if exists), or targetAge
+                                const maxAge = index < contributionSchedule.length - 1
+                                  ? contributionSchedule[index + 1].age
+                                  : targetAge;
+                                
+                                const newAge = Math.max(minAge, Math.min(maxAge, Number(e.target.value) || minAge));
+                                const updated = [...contributionSchedule];
+                                updated[index] = { ...updated[index], age: newAge };
+                                setContributionSchedule(updated);
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === 'Tab') {
+                                  e.preventDefault();
+                                  e.currentTarget.blur();
+                                  // Move to amount input of same entry
+                                  const nextInput = document.querySelector(
+                                    `input[tabindex="${index * 2 + 2}"]`
+                                  ) as HTMLInputElement;
+                                  if (nextInput) {
+                                    setTimeout(() => nextInput.focus(), 0);
+                                  }
+                                }
+                              }}
+                              className="w-full text-sm font-bold text-blue-600 text-center border border-blue-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs text-gray-700 font-medium mb-1">
+                              Amount: $
+                            </label>
+                            <input
+                              type="text"
+                              tabIndex={index * 2 + 2}
+                              value={focusedContributionIndex === index 
+                                ? entry.amount.toString() 
+                                : (entry.amount >= 1000 ? entry.amount.toLocaleString() : entry.amount.toString())
+                              }
+                              onChange={(e) => {
+                                // Remove all non-numeric characters
+                                const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                                if (numericValue === '') {
+                                  const updated = [...contributionSchedule];
+                                  updated[index] = { ...updated[index], amount: 0 };
+                                  setContributionSchedule(updated);
+                                } else {
+                                  const num = Number(numericValue);
+                                  if (!isNaN(num) && num >= 0) {
+                                    const updated = [...contributionSchedule];
+                                    updated[index] = { ...updated[index], amount: num };
+                                    setContributionSchedule(updated);
+                                  }
+                                }
+                              }}
+                              onBlur={() => {
+                                // Clamp to valid range on blur
+                                const newAmount = Math.max(0, Math.min(5000, entry.amount));
+                                if (newAmount !== entry.amount) {
+                                  const updated = [...contributionSchedule];
+                                  updated[index] = { ...updated[index], amount: newAmount };
+                                  setContributionSchedule(updated);
+                                }
+                                setFocusedContributionIndex(null);
+                              }}
+                              onFocus={() => {
+                                setFocusedContributionIndex(index);
+                              }}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === 'Tab') {
+                                  e.preventDefault();
+                                  e.currentTarget.blur();
+                                  // Move to next field: age input of next entry, or stay if last entry
+                                  if (index < contributionSchedule.length - 1) {
+                                    const nextInput = document.querySelector(
+                                      `input[tabindex="${(index + 1) * 2 + 1}"]`
+                                    ) as HTMLInputElement;
+                                    if (nextInput) {
+                                      setTimeout(() => nextInput.focus(), 0);
+                                    }
+                                  }
+                                }
+                              }}
+                              className="w-full text-base font-bold text-blue-600 text-center border border-blue-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            />
+                          </div>
+                        </div>
+                        {contributionSchedule.length > 1 && (
+                          <button
+                            onClick={() => {
+                              const updated = contributionSchedule.filter((_, i) => i !== index);
+                              setContributionSchedule(updated);
+                            }}
+                            className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xs font-bold px-2 py-1"
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => {
+                        const lastAge = contributionSchedule.length > 0 
+                          ? Math.max(...contributionSchedule.map(e => e.age)) + 1
+                          : startAge + 1;
+                        setContributionSchedule([
+                          ...contributionSchedule,
+                          { age: Math.min(lastAge, targetAge), amount: monthlyAmount }
+                        ]);
+                      }}
+                      className="w-full text-xs text-blue-600 hover:text-blue-700 font-medium py-2 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
+                    >
+                      + Add Another Age
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border-2 border-green-200 card-interactive ripple-effect">
@@ -280,22 +585,33 @@ const KidsWealthBlueprint: React.FC = () => {
                 onChange={(e) => setAnnualReturn(Number(e.target.value))}
                 className="w-full h-4 bg-green-200 rounded-lg appearance-none cursor-pointer accent-green-600 mb-3 transition-all duration-300 hover:accent-green-700"
               />
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full min-w-0">
                 <input
-                  type="number"
-                  min="5"
-                  max="20"
-                  step="0.5"
+                  type="text"
                   value={annualReturn}
-                  onChange={(e) => setAnnualReturn(Math.max(5, Math.min(20, Number(e.target.value))))}
+                  onChange={(e) => {
+                    const numericValue = e.target.value.replace(/[^0-9.]/g, '');
+                    if (numericValue === '') {
+                      setAnnualReturn(5);
+                    } else {
+                      const num = Number(numericValue);
+                      if (!isNaN(num)) {
+                        setAnnualReturn(num);
+                      }
+                    }
+                  }}
+                  onBlur={(e) => {
+                    const num = Math.max(5, Math.min(20, Number(e.target.value) || 5));
+                    setAnnualReturn(num);
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.currentTarget.blur();
                     }
                   }}
-                  className="flex-1 text-2xl font-bold text-green-600 text-center border-2 border-green-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-green-500 input-interactive"
+                  className="flex-1 min-w-0 text-2xl font-bold text-green-600 text-center border-2 border-green-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-green-500 input-interactive"
                 />
-                <span className="text-sm text-gray-500">%</span>
+                <span className="text-sm text-gray-500 flex-shrink-0">%</span>
               </div>
               <div className="flex justify-between mt-2 text-xs text-gray-500">
                 <span>5%</span>
@@ -316,22 +632,33 @@ const KidsWealthBlueprint: React.FC = () => {
                 onChange={(e) => setTargetAge(Number(e.target.value))}
                 className="w-full h-4 bg-orange-200 rounded-lg appearance-none cursor-pointer accent-orange-600 mb-3 transition-all duration-300 hover:accent-orange-700"
               />
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full min-w-0">
                 <input
-                  type="number"
-                  min={startAge}
-                  max="70"
-                  step="1"
+                  type="text"
                   value={targetAge}
-                  onChange={(e) => setTargetAge(Math.max(startAge, Math.min(70, Number(e.target.value))))}
+                  onChange={(e) => {
+                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                    if (numericValue === '') {
+                      setTargetAge(startAge);
+                    } else {
+                      const age = Number(numericValue);
+                      if (!isNaN(age)) {
+                        setTargetAge(age);
+                      }
+                    }
+                  }}
+                  onBlur={(e) => {
+                    const age = Math.max(startAge, Math.min(70, Number(e.target.value) || startAge));
+                    setTargetAge(age);
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.currentTarget.blur();
                     }
                   }}
-                  className="flex-1 text-2xl font-bold text-orange-600 text-center border-2 border-orange-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500 input-interactive"
+                  className="flex-1 min-w-0 text-2xl font-bold text-orange-600 text-center border-2 border-orange-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-orange-500 input-interactive"
                 />
-                <span className="text-sm text-gray-500">years</span>
+                <span className="text-sm text-gray-500 flex-shrink-0">years</span>
               </div>
             </div>
           </div>
@@ -377,6 +704,7 @@ const KidsWealthBlueprint: React.FC = () => {
                   tickMargin={8}
                   width={60}
                   allowDecimals={false}
+                  ticks={yAxisTicks}
                   tickFormatter={(value) => {
                     if (value >= 1000000) {
                       return `$${(value / 1000000).toFixed(1)}M`;

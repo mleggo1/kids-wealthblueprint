@@ -81,3 +81,4 @@ const PasswordGate: React.FC<PasswordGateProps> = ({ children, appName = 'Kids W
 
 export default PasswordGate;
 
+
