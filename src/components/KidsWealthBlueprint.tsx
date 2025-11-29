@@ -948,30 +948,30 @@ const KidsWealthBlueprint: React.FC = () => {
 
       {/* Compounding Example Highlight Box */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl text-white">
-          <h2 className="text-2xl sm:text-4xl font-bold mb-4 sm:mb-6 text-center">💰 The Magic of Starting Early</h2>
-          <p className="text-lg sm:text-2xl leading-relaxed text-center mb-6 sm:mb-8 font-semibold">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-4 sm:p-6 md:p-8 lg:p-12 shadow-2xl text-white">
+          <h2 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 sm:mb-4 md:mb-6 text-center">💰 The Magic of Starting Early</h2>
+          <p className="text-base sm:text-lg md:text-2xl leading-relaxed text-center mb-4 sm:mb-6 md:mb-8 font-semibold">
             Start young. Stay consistent. Watch it grow. 🚀
           </p>
           
-          {/* Simple visual bars */}
-          <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-6 sm:mt-8">
+          {/* Simple visual bars - stack on mobile, horizontal on desktop */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-3 md:gap-6 mt-4 sm:mt-6 md:mt-8">
             <div className="text-center transform hover:scale-110 transition-transform">
-              <div className="bg-white/20 rounded-xl p-3 sm:p-6 mb-2">
-                <div className="text-2xl sm:text-4xl font-bold">$0</div>
-                <div className="text-xs sm:text-base opacity-90 mt-2">Start Here</div>
+              <div className="bg-white/20 rounded-xl p-4 sm:p-3 md:p-6 mb-2">
+                <div className="text-3xl sm:text-2xl md:text-4xl font-bold">$0</div>
+                <div className="text-sm sm:text-xs md:text-base opacity-90 mt-2">Start Here</div>
               </div>
             </div>
             <div className="text-center transform hover:scale-110 transition-transform">
-              <div className="bg-white/30 rounded-xl p-3 sm:p-6 mb-2">
-                <div className="text-2xl sm:text-4xl font-bold">$200/mo</div>
-                <div className="text-xs sm:text-base opacity-90 mt-2">Keep Going</div>
+              <div className="bg-white/30 rounded-xl p-4 sm:p-3 md:p-6 mb-2">
+                <div className="text-3xl sm:text-2xl md:text-4xl font-bold">$200/mo</div>
+                <div className="text-sm sm:text-xs md:text-base opacity-90 mt-2">Keep Going</div>
               </div>
             </div>
             <div className="text-center transform hover:scale-110 transition-transform">
-              <div className="bg-white/40 rounded-xl p-3 sm:p-6 mb-2">
-                <div className="text-2xl sm:text-4xl font-bold">$1.2M+</div>
-                <div className="text-xs sm:text-base opacity-90 mt-2">You Win! 🎉</div>
+              <div className="bg-white/40 rounded-xl p-4 sm:p-3 md:p-6 mb-2">
+                <div className="text-3xl sm:text-2xl md:text-4xl font-bold">$1.2M+</div>
+                <div className="text-sm sm:text-xs md:text-base opacity-90 mt-2">You Win! 🎉</div>
               </div>
             </div>
           </div>
