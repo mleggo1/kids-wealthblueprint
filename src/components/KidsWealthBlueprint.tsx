@@ -116,113 +116,110 @@ const KidsWealthBlueprint: React.FC = () => {
   const totalContributed = chartData[chartData.length - 1]?.contributed || 0;
   const totalGrowth = chartData[chartData.length - 1]?.growth || 0;
 
-  // Calculate max value for Y-axis - always show next tick above max, maximizing chart space
+  // Calculate max value for Y-axis - find true max across all series, then snap to first nice step above
   const maxValue = useMemo(() => {
-    if (chartData.length === 0) return 1000000; // Default if no data
+    if (chartData.length === 0) return 100000; // Default if no data
     
+    // Find the true maximum across all series (Total Value and Amount Invested)
     const max = Math.max(...chartData.map(d => Math.max(d.total, d.contributed)));
     
-    if (max === 0) return 1000000;
+    if (max === 0) return 100000;
     
-    // Calculate next logical tick that's just above max to maximize chart space
+    // Choose a "nice" step size based on magnitude
+    let step: number;
+    
     if (max >= 1000000) {
-      // For millions, round up to next logical increment
-      const millions = max / 1000000;
-      // Round up to next 0.2M, 0.5M, or 1M increment based on value
-      if (millions <= 0.2) return 500000; // $0.5M
-      if (millions <= 0.5) return 1000000; // $1M
-      if (millions <= 1) return 1500000; // $1.5M
-      if (millions <= 1.5) return 2000000; // $2M
-      if (millions <= 2) return 2500000; // $2.5M
-      if (millions <= 2.5) return 3000000; // $3M
-      if (millions <= 3) return 4000000; // $4M
-      if (millions <= 4) return 5000000; // $5M
-      if (millions <= 5) return 6000000; // $6M
-      if (millions <= 6) return 8000000; // $8M
-      if (millions <= 8) return 10000000; // $10M
-      if (millions <= 10) return 12000000; // $12M
-      if (millions <= 12) return 15000000; // $15M
-      if (millions <= 15) return 20000000; // $20M
-      // For larger values, round up to next 5M increment
-      return Math.ceil(millions / 5) * 5 * 1000000;
+      // For millions, use 100k, 200k, 500k, or 1M steps
+      if (max < 2000000) step = 200000;      // 0.2M steps
+      else if (max < 5000000) step = 500000;  // 0.5M steps
+      else if (max < 10000000) step = 1000000; // 1M steps
+      else if (max < 20000000) step = 2000000; // 2M steps
+      else if (max < 50000000) step = 5000000; // 5M steps
+      else step = 10000000;                     // 10M steps
     } else if (max >= 100000) {
-      // For hundreds of thousands, calculate tight cap to maximize chart space
-      // Add only 8-12% padding above max, then round up to nearest 10k
-      const padding = 1.10; // 10% above max for minimal padding
-      const preciseCap = max * padding;
-      // Round up to nearest 10k increment
-      const roundedCap = Math.ceil(preciseCap / 10000) * 10000;
-      return roundedCap;
-    } else if (max >= 10000) {
-      // For tens of thousands, add 10% padding and round up to nearest 5k or 10k
-      const padding = 1.10;
-      const preciseCap = max * padding;
-      // Round up to nearest 5k, then to 10k if needed
-      const roundedCap = Math.ceil(preciseCap / 5000) * 5000;
-      // If it's close to a 10k boundary, round to 10k for cleaner ticks
-      if (roundedCap % 10000 < 2000) {
-        return Math.ceil(preciseCap / 10000) * 10000;
+      // For hundreds of thousands, use 10k or 20k steps
+      step = 10000; // Default to 10k
+      const numTicksWith10k = Math.ceil(max / 10000);
+      if (numTicksWith10k > 12) {
+        step = 20000; // Use 20k if too many ticks
       }
-      return roundedCap;
+    } else if (max >= 10000) {
+      // For tens of thousands, use 2k, 5k, or 10k steps
+      if (max < 20000) step = 2000;
+      else if (max < 50000) step = 5000;
+      else step = 10000;
     } else if (max >= 1000) {
-      // For thousands, add 10% padding and round up to nearest 1k
-      const padding = 1.10;
-      const preciseCap = max * padding;
-      return Math.ceil(preciseCap / 1000) * 1000;
+      // For thousands, use 500, 1k, or 2k steps
+      if (max < 2000) step = 500;
+      else if (max < 5000) step = 1000;
+      else step = 2000;
+    } else if (max >= 100) {
+      // For hundreds, use 50, 100, or 200 steps
+      if (max < 200) step = 50;
+      else if (max < 500) step = 100;
+      else step = 200;
     } else {
-      // For smaller values, add 10% padding and round up to nearest 100
-      const padding = 1.10;
-      const preciseCap = max * padding;
-      return Math.ceil(preciseCap / 100) * 100;
+      // For smaller values, use 10, 20, or 50 steps
+      if (max < 20) step = 10;
+      else if (max < 50) step = 20;
+      else step = 50;
     }
+    
+    // Snap to first step ABOVE max value (no padding factor)
+    const yMax = Math.ceil(max / step) * step;
+    
+    return yMax;
   }, [chartData]);
 
-  // Calculate Y-axis ticks using $10k increments, auto-scaling to $20k if crowded
+  // Calculate Y-axis ticks using the same step size logic as maxValue
   const yAxisTicks = useMemo(() => {
-    if (maxValue === 0) return [0, 1000000];
+    if (maxValue === 0) return [0, 100000];
     
-    // Start with $10k increments
-    let increment = 10000;
+    // Determine step size based on maxValue (same logic as maxValue calculation)
+    let step: number;
     
-    // For values >= $100k, use $10k increments, but auto-scale to $20k if too many ticks
-    if (maxValue >= 100000) {
-      // Check how many ticks we'd get with $10k increments
-      const numTicksWith10k = Math.floor(maxValue / 10000) + 1;
-      // If more than 12 ticks, use $20k increments instead
-      if (numTicksWith10k > 12) {
-        increment = 20000;
+    if (maxValue >= 1000000) {
+      if (maxValue < 2000000) step = 200000;
+      else if (maxValue < 5000000) step = 500000;
+      else if (maxValue < 10000000) step = 1000000;
+      else if (maxValue < 20000000) step = 2000000;
+      else if (maxValue < 50000000) step = 5000000;
+      else step = 10000000;
+    } else if (maxValue >= 100000) {
+      step = 10000;
+      const numTicks = Math.ceil(maxValue / 10000);
+      if (numTicks > 12) {
+        step = 20000;
       }
     } else if (maxValue >= 10000) {
-      // For $10k-$100k range, use $5k increments, scale to $10k if crowded
-      increment = 5000;
-      const numTicksWith5k = Math.floor(maxValue / 5000) + 1;
-      if (numTicksWith5k > 12) {
-        increment = 10000;
-      }
+      if (maxValue < 20000) step = 2000;
+      else if (maxValue < 50000) step = 5000;
+      else step = 10000;
     } else if (maxValue >= 1000) {
-      // For $1k-$10k range, use $1k increments, scale to $2k if crowded
-      increment = 1000;
-      const numTicksWith1k = Math.floor(maxValue / 1000) + 1;
-      if (numTicksWith1k > 12) {
-        increment = 2000;
-      }
+      if (maxValue < 2000) step = 500;
+      else if (maxValue < 5000) step = 1000;
+      else step = 2000;
+    } else if (maxValue >= 100) {
+      if (maxValue < 200) step = 50;
+      else if (maxValue < 500) step = 100;
+      else step = 200;
     } else {
-      // For smaller values, use $100 increments, scale to $200 if crowded
-      increment = 100;
-      const numTicksWith100 = Math.floor(maxValue / 100) + 1;
-      if (numTicksWith100 > 12) {
-        increment = 200;
-      }
+      if (maxValue < 20) step = 10;
+      else if (maxValue < 50) step = 20;
+      else step = 50;
     }
     
-    // Generate ticks from 0 to maxValue using the increment
+    // Generate ticks from 0 to maxValue using the step
     const ticks = [0];
-    let current = increment;
-    while (current < maxValue) {
+    let current = step;
+    while (current <= maxValue) {
       ticks.push(current);
-      current += increment;
+      current += step;
     }
-    ticks.push(maxValue); // Always include maxValue at the top
+    // Ensure maxValue is always included (it should be, but double-check)
+    if (ticks[ticks.length - 1] !== maxValue) {
+      ticks.push(maxValue);
+    }
     return ticks;
   }, [maxValue]);
 
