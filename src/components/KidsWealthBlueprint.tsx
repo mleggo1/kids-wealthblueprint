@@ -716,7 +716,9 @@ const KidsWealthBlueprint: React.FC = () => {
                         <span className="text-2xl">🐷</span>
                         <div>
                           <p className="font-bold text-gray-900 text-sm sm:text-base">Just Saving (Piggy Bank):</p>
-                          <p className="text-sm sm:text-base text-gray-700">Your $100 stays $100. No growth. No magic. 😴</p>
+                          <p className="text-sm sm:text-base text-gray-700">
+                            Your ${monthlyAmount.toLocaleString()} stays ${monthlyAmount.toLocaleString()}. No growth. No magic. 😴
+                          </p>
                         </div>
                       </div>
                       
@@ -725,9 +727,9 @@ const KidsWealthBlueprint: React.FC = () => {
                         <div>
                           <p className="font-bold text-green-700 text-sm sm:text-base">Investing (Like This Chart!):</p>
                           <p className="text-sm sm:text-base text-gray-700">
-                            If you invest <strong>$100</strong> and leave it for <strong>one full year</strong> at {annualReturn}% annual return, 
-                            it grows to <strong className="text-green-700">${(100 * (1 + annualReturn / 100)).toFixed(0)}</strong> after that year! 
-                            That's <strong className="text-green-700">${(100 * annualReturn / 100).toFixed(0)}</strong> of <em>free money</em> you earned just for investing! 🎉
+                            If you invest <strong>${monthlyAmount.toLocaleString()}</strong> and leave it for <strong>one full year</strong> at {annualReturn}% annual return, 
+                            it grows to <strong className="text-green-700">${(monthlyAmount * (1 + annualReturn / 100)).toLocaleString()}</strong> after that year! 
+                            That's <strong className="text-green-700">${(monthlyAmount * annualReturn / 100).toLocaleString()}</strong> of <em>free money</em> you earned just for investing! 🎉
                           </p>
                           <p className="text-xs sm:text-sm text-gray-600 italic mt-1">
                             (This is for ONE FULL YEAR, not one month!)
