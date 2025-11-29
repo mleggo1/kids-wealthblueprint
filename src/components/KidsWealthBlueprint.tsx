@@ -581,9 +581,14 @@ const KidsWealthBlueprint: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-green-200 card-interactive ripple-effect">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-green-200 card-interactive ripple-effect relative">
               <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4">
-                📈 Return (% per year)
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span>📈 Return (% per year)</span>
+                  <span className="text-yellow-500 text-xl sm:text-2xl animate-pulse" id="return-star" title="Learn about investing below!">⭐</span>
+                  <span className="text-green-600 text-base sm:text-lg animate-bounce">↓</span>
+                </div>
+                <p className="text-xs sm:text-sm text-green-700 font-medium mt-1 italic">This is how investing grows your money! See below ↓</p>
               </label>
               <input
                 type="range"
@@ -668,6 +673,57 @@ const KidsWealthBlueprint: React.FC = () => {
                   className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-orange-600 text-center border-2 border-orange-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-orange-500 input-interactive"
                 />
                 <span className="text-sm text-gray-500 flex-shrink-0">years</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Educational Callout: Building Wealth Through Investing */}
+          <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-2xl p-5 sm:p-6 md:p-8 mb-6 border-4 border-green-400 shadow-lg relative overflow-hidden">
+            {/* Decorative elements */}
+            <div className="absolute top-2 right-2 text-6xl sm:text-7xl opacity-10">💰</div>
+            <div className="absolute bottom-2 left-2 text-5xl sm:text-6xl opacity-10">📈</div>
+            
+            <div className="relative z-10">
+              <div className="flex items-start gap-3 mb-4">
+                <span className="text-3xl sm:text-4xl">⭐</span>
+                <div className="flex-1">
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                    💡 This is How You Build Wealth Through Investing!
+                  </h3>
+                  <p className="text-base sm:text-lg text-gray-700 leading-relaxed mb-4">
+                    The <strong className="text-green-700">Return %</strong> above shows you how much your money grows each year when you <strong className="text-green-700">invest</strong> it instead of just saving it in a piggy bank!
+                  </p>
+                  
+                  <div className="bg-white/80 rounded-xl p-4 sm:p-5 border-2 border-green-300 mb-4">
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">🐷</span>
+                        <div>
+                          <p className="font-bold text-gray-900 text-sm sm:text-base">Just Saving (Piggy Bank):</p>
+                          <p className="text-sm sm:text-base text-gray-700">Your $100 stays $100. No growth. No magic. 😴</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-start gap-3">
+                        <span className="text-2xl">🚀</span>
+                        <div>
+                          <p className="font-bold text-green-700 text-sm sm:text-base">Investing (Like This Chart!):</p>
+                          <p className="text-sm sm:text-base text-gray-700">
+                            Your $100 grows to <strong className="text-green-700">${(100 * (1 + annualReturn / 100)).toFixed(0)}</strong> in one year at {annualReturn}% return! 
+                            That's <strong className="text-green-700">${(100 * annualReturn / 100).toFixed(0)}</strong> of <em>free money</em> just for investing! 🎉
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg p-4">
+                    <p className="text-sm sm:text-base text-gray-800 font-semibold">
+                      💰 <strong>The Secret:</strong> When you invest, your money makes money. Then that money makes more money. That's called <strong className="text-green-700">compounding</strong> - and it's how real wealth is built! 
+                      Watch the blue line in the chart below grow faster and faster over time. That's the magic of investing! ✨
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
