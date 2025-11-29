@@ -690,8 +690,24 @@ const KidsWealthBlueprint: React.FC = () => {
                   <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2">
                     💡 This is How You Build Wealth Through Investing!
                   </h3>
+                  
+                  {/* What is Investing - Simple Explanation for Teenagers */}
+                  <div className="bg-blue-50 border-2 border-blue-300 rounded-xl p-4 sm:p-5 mb-4">
+                    <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">🤔 What is Investing? (In Simple Terms)</h4>
+                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-3">
+                      <strong>Investing</strong> is like planting a money tree! Instead of keeping your money in a piggy bank where it just sits there, you put it to work. 
+                      You buy small pieces of companies (called stocks) or funds that own lots of companies. As those companies grow and make money, 
+                      your money grows too! It's like owning a tiny piece of Apple, Google, or the whole stock market.
+                    </p>
+                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
+                      <strong>Think of it this way:</strong> If you save $100 in a piggy bank, you still have $100 a year later. 
+                      But if you <strong className="text-green-700">invest</strong> that $100, it can grow to $108, $114, or even more - 
+                      without you doing anything except being patient! That's the power of investing. 🚀
+                    </p>
+                  </div>
+                  
                   <p className="text-base sm:text-lg text-gray-700 leading-relaxed mb-4">
-                    The <strong className="text-green-700">Return %</strong> above shows you how much your money grows each year when you <strong className="text-green-700">invest</strong> it instead of just saving it in a piggy bank!
+                    The <strong className="text-green-700">Return %</strong> above shows you how much your money grows <strong>each full year</strong> when you <strong className="text-green-700">invest</strong> it instead of just saving it in a piggy bank!
                   </p>
                   
                   <div className="bg-white/80 rounded-xl p-4 sm:p-5 border-2 border-green-300 mb-4">
@@ -709,8 +725,12 @@ const KidsWealthBlueprint: React.FC = () => {
                         <div>
                           <p className="font-bold text-green-700 text-sm sm:text-base">Investing (Like This Chart!):</p>
                           <p className="text-sm sm:text-base text-gray-700">
-                            Your $100 grows to <strong className="text-green-700">${(100 * (1 + annualReturn / 100)).toFixed(0)}</strong> in one year at {annualReturn}% return! 
-                            That's <strong className="text-green-700">${(100 * annualReturn / 100).toFixed(0)}</strong> of <em>free money</em> just for investing! 🎉
+                            If you invest <strong>$100</strong> and leave it for <strong>one full year</strong> at {annualReturn}% annual return, 
+                            it grows to <strong className="text-green-700">${(100 * (1 + annualReturn / 100)).toFixed(0)}</strong> after that year! 
+                            That's <strong className="text-green-700">${(100 * annualReturn / 100).toFixed(0)}</strong> of <em>free money</em> you earned just for investing! 🎉
+                          </p>
+                          <p className="text-xs sm:text-sm text-gray-600 italic mt-1">
+                            (This is for ONE FULL YEAR, not one month!)
                           </p>
                         </div>
                       </div>
