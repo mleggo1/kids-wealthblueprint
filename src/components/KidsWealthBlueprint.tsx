@@ -678,69 +678,72 @@ const KidsWealthBlueprint: React.FC = () => {
           </div>
 
           {/* Educational Callout: Building Wealth Through Investing */}
-          <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-2xl p-5 sm:p-6 md:p-8 mb-6 border-4 border-green-400 shadow-lg relative overflow-hidden">
-            {/* Decorative elements */}
-            <div className="absolute top-2 right-2 text-6xl sm:text-7xl opacity-10">💰</div>
-            <div className="absolute bottom-2 left-2 text-5xl sm:text-6xl opacity-10">📈</div>
+          <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-8 mb-4 sm:mb-6 border-2 sm:border-4 border-green-400 shadow-lg relative overflow-hidden">
+            {/* Decorative elements - smaller on mobile */}
+            <div className="absolute top-1 right-1 sm:top-2 sm:right-2 text-4xl sm:text-6xl md:text-7xl opacity-10">💰</div>
+            <div className="absolute bottom-1 left-1 sm:bottom-2 sm:left-2 text-3xl sm:text-5xl md:text-6xl opacity-10">📈</div>
             
             <div className="relative z-10">
-              <div className="flex items-start gap-3 mb-4">
-                <span className="text-3xl sm:text-4xl">⭐</span>
-                <div className="flex-1">
-                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+              <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-4">
+                <span className="text-2xl sm:text-3xl md:text-4xl flex-shrink-0">⭐</span>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
                     💡 This is How You Build Wealth Through Investing!
                   </h3>
                   
-                  {/* What is Investing - Simple Explanation for Teenagers */}
-                  <div className="bg-blue-50 border-2 border-blue-300 rounded-xl p-4 sm:p-5 mb-4">
-                    <h4 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">🤔 What is Investing? (In Simple Terms)</h4>
-                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed mb-3">
+                  {/* What is Investing - Simple Explanation for Teenagers - more compact on mobile */}
+                  <div className="bg-blue-50 border-2 border-blue-300 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 lg:p-5 mb-2 sm:mb-3 md:mb-4">
+                    <h4 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1 sm:mb-2">🤔 What is Investing?</h4>
+                    <p className="text-xs sm:text-sm md:text-base text-gray-700 leading-relaxed mb-2 sm:mb-3">
                       <strong>Investing</strong> is like planting a money tree! Instead of keeping your money in a piggy bank where it just sits there, you put it to work. 
-                      You buy small pieces of companies (called stocks) or funds that own lots of companies. As those companies grow and make money, 
-                      your money grows too! It's like owning a tiny piece of Apple, Google, or the whole stock market.
+                      You buy small pieces of companies (called stocks) or funds. As those companies grow, your money grows too! 🚀
                     </p>
-                    <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
-                      <strong>Think of it this way:</strong> If you save $100 in a piggy bank, you still have $100 a year later. 
-                      But if you <strong className="text-green-700">invest</strong> that $100, it can grow to $108, $114, or even more - 
-                      without you doing anything except being patient! That's the power of investing. 🚀
+                    <p className="text-xs sm:text-sm md:text-base text-gray-700 leading-relaxed">
+                      <strong>Think of it this way:</strong> If you save $100, you still have $100 a year later. 
+                      But if you <strong className="text-green-700">invest</strong> that $100, it can grow to $108, $114, or more - 
+                      without you doing anything except being patient!
                     </p>
                   </div>
                   
-                  <p className="text-base sm:text-lg text-gray-700 leading-relaxed mb-4">
-                    The <strong className="text-green-700">Return %</strong> above shows you how much your money grows <strong>each full year</strong> when you <strong className="text-green-700">invest</strong> it instead of just saving it in a piggy bank!
+                  <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 leading-relaxed mb-2 sm:mb-3 md:mb-4">
+                    The <strong className="text-green-700">Return %</strong> above shows how much your money grows <strong>each full year</strong> when you <strong className="text-green-700">invest</strong> it!
                   </p>
                   
-                  <div className="bg-white/80 rounded-xl p-4 sm:p-5 border-2 border-green-300 mb-4">
-                    <div className="space-y-3">
-                      <div className="flex items-start gap-3">
-                        <span className="text-2xl">🐷</span>
-                        <div>
-                          <p className="font-bold text-gray-900 text-sm sm:text-base">Just Saving (Piggy Bank):</p>
-                          <p className="text-sm sm:text-base text-gray-700">
-                            Your ${monthlyAmount.toLocaleString()} stays ${monthlyAmount.toLocaleString()}. No growth. No magic. 😴
+                  <div className="bg-white/80 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 lg:p-5 border-2 border-green-300 mb-2 sm:mb-3 md:mb-4">
+                    <div className="space-y-2 sm:space-y-3">
+                      <div className="flex items-start gap-2 sm:gap-3">
+                        <span className="text-xl sm:text-2xl flex-shrink-0">🐷</span>
+                        <div className="min-w-0">
+                          <p className="font-bold text-gray-900 text-xs sm:text-sm md:text-base">Just Saving (Piggy Bank):</p>
+                          <p className="text-xs sm:text-sm md:text-base text-gray-700">
+                            Your ${(monthlyAmount * 12).toLocaleString()}/year stays ${(monthlyAmount * 12).toLocaleString()}. No growth. 😴
                           </p>
                         </div>
                       </div>
                       
-                      <div className="flex items-start gap-3">
-                        <span className="text-2xl">🚀</span>
-                        <div>
-                          <p className="font-bold text-green-700 text-sm sm:text-base">Investing (Like This Chart!):</p>
-                          <p className="text-sm sm:text-base text-gray-700">
-                            If you invest <strong>${monthlyAmount.toLocaleString()}</strong> and leave it for <strong>one full year</strong> at {annualReturn}% annual return, 
-                            it grows to <strong className="text-green-700">${(monthlyAmount * (1 + annualReturn / 100)).toLocaleString()}</strong> after that year! 
-                            That's <strong className="text-green-700">${(monthlyAmount * annualReturn / 100).toLocaleString()}</strong> of <em>free money</em> you earned just for investing! 🎉
-                          </p>
-                          <p className="text-xs sm:text-sm text-gray-600 italic mt-1">
-                            (This is for ONE FULL YEAR, not one month!)
-                          </p>
+                      <div className="flex items-start gap-2 sm:gap-3">
+                        <span className="text-xl sm:text-2xl flex-shrink-0">🚀</span>
+                        <div className="min-w-0">
+                          <p className="font-bold text-green-700 text-xs sm:text-sm md:text-base">Investing (Like This Chart!):</p>
+                          {(() => {
+                            const yearlyInvestment = monthlyAmount * 12;
+                            const afterOneYear = yearlyInvestment * (1 + annualReturn / 100);
+                            const growth = yearlyInvestment * annualReturn / 100;
+                            return (
+                              <p className="text-xs sm:text-sm md:text-base text-gray-700">
+                                If you invest <strong>${yearlyInvestment.toLocaleString()}</strong> (${monthlyAmount.toLocaleString()}/month × 12) for <strong>one full year</strong> at {annualReturn}% annual return, 
+                                it grows to <strong className="text-green-700">${Math.round(afterOneYear).toLocaleString()}</strong>! 
+                                That's <strong className="text-green-700">${Math.round(growth).toLocaleString()}</strong> of <em>free money</em> you earned! 🎉
+                              </p>
+                            );
+                          })()}
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg p-4">
-                    <p className="text-sm sm:text-base text-gray-800 font-semibold">
+                  <div className="bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg p-2 sm:p-3 md:p-4">
+                    <p className="text-xs sm:text-sm md:text-base text-gray-800 font-semibold">
                       💰 <strong>The Secret:</strong> When you invest, your money makes money. Then that money makes more money. That's called <strong className="text-green-700">compounding</strong> - and it's how real wealth is built! 
                       Watch the blue line in the chart below grow faster and faster over time. That's the magic of investing! ✨
                     </p>
