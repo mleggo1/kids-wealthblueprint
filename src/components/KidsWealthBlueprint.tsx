@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   ResponsiveContainer,
   LineChart,
@@ -68,6 +68,18 @@ const calculateCompound = (
 };
 
 const KidsWealthBlueprint: React.FC = () => {
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
   // Interactive chart state
   const [startAge, setStartAge] = useState(0);
   const [monthlyAmount, setMonthlyAmount] = useState(100);
@@ -298,17 +310,17 @@ const KidsWealthBlueprint: React.FC = () => {
       {/* Interactive Compounding Chart */}
       <section id="watch-money-grow" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-gradient-to-br from-blue-50/90 to-indigo-50/90 backdrop-blur-sm rounded-3xl p-6 sm:p-8 shadow-xl border-2 border-blue-100 card-interactive">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 text-center">
             🚀 Watch Your Money Grow!
           </h2>
-          <p className="text-center text-gray-700 mb-6 text-lg font-medium">
+          <p className="text-center text-gray-700 mb-4 sm:mb-6 text-base sm:text-lg font-medium">
             See what happens when you start investing early
           </p>
 
           {/* Interactive Controls */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border-2 border-purple-200 card-interactive ripple-effect">
-              <label className="block text-base font-bold text-gray-800 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-purple-200 card-interactive ripple-effect">
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4">
                 👶 Child's Age
               </label>
               <input
@@ -349,12 +361,12 @@ const KidsWealthBlueprint: React.FC = () => {
                     e.currentTarget.blur();
                   }
                 }}
-                className="w-full text-2xl font-bold text-purple-600 text-center border-2 border-purple-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 input-interactive"
+                className="w-full text-xl sm:text-2xl font-bold text-purple-600 text-center border-2 border-purple-300 rounded-lg py-2 px-2 sm:px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 input-interactive"
               />
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border-2 border-blue-200 overflow-hidden card-interactive ripple-effect">
-              <label className="block text-base font-bold text-gray-800 mb-4">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-blue-200 overflow-hidden card-interactive ripple-effect">
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4">
                 💵 Monthly Investment
               </label>
               <input
@@ -395,7 +407,7 @@ const KidsWealthBlueprint: React.FC = () => {
                       if (monthlyAmount > 5000) setMonthlyAmount(5000);
                     }
                   }}
-                  className="flex-1 min-w-0 text-2xl font-bold text-blue-600 text-center border-2 border-blue-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500 input-interactive"
+                  className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-blue-600 text-center border-2 border-blue-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500 input-interactive"
                 />
               </div>
               <div className="flex justify-between mt-2 text-xs text-gray-500">
@@ -572,8 +584,8 @@ const KidsWealthBlueprint: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border-2 border-green-200 card-interactive ripple-effect">
-              <label className="block text-base font-bold text-gray-800 mb-4">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-green-200 card-interactive ripple-effect">
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4">
                 📈 Return (% per year)
               </label>
               <input
@@ -609,7 +621,7 @@ const KidsWealthBlueprint: React.FC = () => {
                       e.currentTarget.blur();
                     }
                   }}
-                  className="flex-1 min-w-0 text-2xl font-bold text-green-600 text-center border-2 border-green-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-green-500 input-interactive"
+                  className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-green-600 text-center border-2 border-green-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-green-500 input-interactive"
                 />
                 <span className="text-sm text-gray-500 flex-shrink-0">%</span>
               </div>
@@ -619,8 +631,8 @@ const KidsWealthBlueprint: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border-2 border-orange-200 card-interactive ripple-effect">
-              <label className="block text-base font-bold text-gray-800 mb-4">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-orange-200 card-interactive ripple-effect">
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4">
                 🎯 Target Age
               </label>
               <input
@@ -656,7 +668,7 @@ const KidsWealthBlueprint: React.FC = () => {
                       e.currentTarget.blur();
                     }
                   }}
-                  className="flex-1 min-w-0 text-2xl font-bold text-orange-600 text-center border-2 border-orange-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-orange-500 input-interactive"
+                  className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-orange-600 text-center border-2 border-orange-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-orange-500 input-interactive"
                 />
                 <span className="text-sm text-gray-500 flex-shrink-0">years</span>
               </div>
@@ -665,10 +677,10 @@ const KidsWealthBlueprint: React.FC = () => {
 
           {/* Chart */}
           <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 sm:p-3 shadow-lg mb-8 w-full card-interactive">
-            <ResponsiveContainer width="100%" height={550}>
+            <ResponsiveContainer width="100%" height={isMobile ? 400 : 550}>
               <LineChart 
                 data={chartData} 
-                margin={{ top: 38, right: 38, left: 38, bottom: 38 }}
+                margin={isMobile ? { top: 20, right: 15, left: 45, bottom: 30 } : { top: 38, right: 38, left: 38, bottom: 38 }}
               >
                 <CartesianGrid 
                   strokeDasharray="3 3" 
@@ -681,13 +693,13 @@ const KidsWealthBlueprint: React.FC = () => {
                   scale="linear"
                   domain={['dataMin', 'dataMax']}
                   stroke="#111827"
-                  strokeWidth={2}
+                  strokeWidth={isMobile ? 1.5 : 2}
                   tick={{ 
-                    fontSize: 16, 
+                    fontSize: isMobile ? 12 : 16, 
                     fill: '#111827',
                     fontWeight: 700
                   }}
-                  tickMargin={8}
+                  tickMargin={isMobile ? 5 : 8}
                   allowDecimals={false}
                   interval="preserveStartEnd"
                 />
@@ -695,14 +707,14 @@ const KidsWealthBlueprint: React.FC = () => {
                   scale="linear"
                   domain={[0, maxValue]}
                   stroke="#111827"
-                  strokeWidth={2}
+                  strokeWidth={isMobile ? 1.5 : 2}
                   tick={{ 
-                    fontSize: 16, 
+                    fontSize: isMobile ? 11 : 16, 
                     fill: '#111827',
                     fontWeight: 700
                   }}
-                  tickMargin={8}
-                  width={60}
+                  tickMargin={isMobile ? 5 : 8}
+                  width={isMobile ? 45 : 60}
                   allowDecimals={false}
                   ticks={yAxisTicks}
                   tickFormatter={(value) => {
@@ -721,14 +733,14 @@ const KidsWealthBlueprint: React.FC = () => {
                     backgroundColor: '#fff', 
                     border: '2px solid #3b82f6', 
                     borderRadius: '8px',
-                    padding: '12px',
-                    fontSize: '16px',
+                    padding: isMobile ? '8px' : '12px',
+                    fontSize: isMobile ? '12px' : '16px',
                     fontWeight: 600,
                     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
                   }}
                   labelStyle={{
                     fontWeight: 'bold',
-                    fontSize: '16px',
+                    fontSize: isMobile ? '12px' : '16px',
                     marginBottom: '4px'
                   }}
                 />
@@ -736,43 +748,43 @@ const KidsWealthBlueprint: React.FC = () => {
                   verticalAlign="bottom"
                   align="center"
                   wrapperStyle={{ 
-                    paddingTop: '20px',
-                    fontSize: '16px',
+                    paddingTop: isMobile ? '10px' : '20px',
+                    fontSize: isMobile ? '12px' : '16px',
                     fontWeight: 700
                   }}
                   iconType="line"
-                  iconSize={20}
+                  iconSize={isMobile ? 15 : 20}
                 />
                 <Line
                   type="monotone"
                   dataKey="total"
                   name="Total Value"
                   stroke="#2563eb"
-                  strokeWidth={5}
+                  strokeWidth={isMobile ? 3 : 5}
                   dot={false}
-                  activeDot={{ r: 10, fill: '#2563eb', strokeWidth: 3, stroke: '#fff' }}
+                  activeDot={{ r: isMobile ? 6 : 10, fill: '#2563eb', strokeWidth: 3, stroke: '#fff' }}
                 />
                 <Line
                   type="monotone"
                   dataKey="contributed"
                   name="Amount Invested"
                   stroke="#10b981"
-                  strokeWidth={5}
+                  strokeWidth={isMobile ? 3 : 5}
                   strokeDasharray="10 5"
                   dot={false}
-                  activeDot={{ r: 10, fill: '#10b981', strokeWidth: 3, stroke: '#fff' }}
+                  activeDot={{ r: isMobile ? 6 : 10, fill: '#10b981', strokeWidth: 3, stroke: '#fff' }}
                 />
                 <ReferenceLine
                   x={targetAge}
                   stroke="#9333ea"
-                  strokeWidth={4}
+                  strokeWidth={isMobile ? 3 : 4}
                   strokeDasharray="10 5"
                   label={{ 
                     value: `Age ${targetAge}`, 
                     position: 'top',
-                    offset: 10,
+                    offset: isMobile ? 5 : 10,
                     style: {
-                      fontSize: '16px',
+                      fontSize: isMobile ? '12px' : '16px',
                       fontWeight: 'bold',
                       fill: '#9333ea',
                       textAnchor: 'middle'
@@ -784,36 +796,36 @@ const KidsWealthBlueprint: React.FC = () => {
           </div>
 
           {/* Summary Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-8 shadow-xl text-center text-white transform hover:scale-105 transition-transform">
-              <div className="text-5xl font-bold mb-3">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
+            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-4 sm:p-8 shadow-xl text-center text-white transform hover:scale-105 transition-transform">
+              <div className="text-3xl sm:text-5xl font-bold mb-2 sm:mb-3">
                 ${finalAmount.toLocaleString()}
               </div>
-              <div className="text-lg font-semibold">Total at Age {targetAge}</div>
+              <div className="text-sm sm:text-lg font-semibold">Total at Age {targetAge}</div>
             </div>
-            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-8 shadow-xl text-center text-white transform hover:scale-105 transition-transform">
-              <div className="text-5xl font-bold mb-3">
+            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-4 sm:p-8 shadow-xl text-center text-white transform hover:scale-105 transition-transform">
+              <div className="text-3xl sm:text-5xl font-bold mb-2 sm:mb-3">
                 ${totalContributed.toLocaleString()}
               </div>
-              <div className="text-lg font-semibold">Total Invested</div>
+              <div className="text-sm sm:text-lg font-semibold">Total Invested</div>
             </div>
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-8 shadow-xl text-center text-white transform hover:scale-105 transition-transform">
-              <div className="text-5xl font-bold mb-3">
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-4 sm:p-8 shadow-xl text-center text-white transform hover:scale-105 transition-transform">
+              <div className="text-3xl sm:text-5xl font-bold mb-2 sm:mb-3">
                 ${totalGrowth.toLocaleString()}
               </div>
-              <div className="text-lg font-semibold">Free Money from Growth!</div>
+              <div className="text-sm sm:text-lg font-semibold">Free Money from Growth!</div>
             </div>
           </div>
 
-          <div className="bg-yellow-50 border-2 border-yellow-300 rounded-2xl p-6 text-center">
-            <p className="text-2xl font-bold text-gray-800 mb-2">
+          <div className="bg-yellow-50 border-2 border-yellow-300 rounded-2xl p-4 sm:p-6 text-center">
+            <p className="text-lg sm:text-2xl font-bold text-gray-800 mb-2">
               🎉 Starting at age <span className="text-purple-600">{startAge}</span> with <span className="text-blue-600">${monthlyAmount}/month</span>
             </p>
-            <p className="text-xl text-gray-700">
+            <p className="text-base sm:text-xl text-gray-700">
               By age <span className="text-orange-600 font-bold">{targetAge}</span>, you could have{' '}
-              <span className="text-blue-600 font-bold text-3xl">${finalAmount.toLocaleString()}</span>
+              <span className="text-blue-600 font-bold text-2xl sm:text-3xl">${finalAmount.toLocaleString()}</span>
             </p>
-            <p className="text-lg text-gray-600 mt-3">
+            <p className="text-sm sm:text-lg text-gray-600 mt-3">
               That's <strong>${totalGrowth.toLocaleString()}</strong> in free growth money! 🚀
             </p>
           </div>
@@ -935,31 +947,31 @@ const KidsWealthBlueprint: React.FC = () => {
       </section>
 
       {/* Compounding Example Highlight Box */}
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 sm:p-12 shadow-2xl text-white">
-          <h2 className="text-4xl font-bold mb-6 text-center">💰 The Magic of Starting Early</h2>
-          <p className="text-2xl leading-relaxed text-center mb-8 font-semibold">
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl text-white">
+          <h2 className="text-2xl sm:text-4xl font-bold mb-4 sm:mb-6 text-center">💰 The Magic of Starting Early</h2>
+          <p className="text-lg sm:text-2xl leading-relaxed text-center mb-6 sm:mb-8 font-semibold">
             Start young. Stay consistent. Watch it grow. 🚀
           </p>
           
           {/* Simple visual bars */}
-          <div className="grid grid-cols-3 gap-6 mt-8">
+          <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-6 sm:mt-8">
             <div className="text-center transform hover:scale-110 transition-transform">
-              <div className="bg-white/20 rounded-xl p-6 mb-2">
-                <div className="text-4xl font-bold">$0</div>
-                <div className="text-base opacity-90 mt-2">Start Here</div>
+              <div className="bg-white/20 rounded-xl p-3 sm:p-6 mb-2">
+                <div className="text-2xl sm:text-4xl font-bold">$0</div>
+                <div className="text-xs sm:text-base opacity-90 mt-2">Start Here</div>
               </div>
             </div>
             <div className="text-center transform hover:scale-110 transition-transform">
-              <div className="bg-white/30 rounded-xl p-6 mb-2">
-                <div className="text-4xl font-bold">$200/mo</div>
-                <div className="text-base opacity-90 mt-2">Keep Going</div>
+              <div className="bg-white/30 rounded-xl p-3 sm:p-6 mb-2">
+                <div className="text-2xl sm:text-4xl font-bold">$200/mo</div>
+                <div className="text-xs sm:text-base opacity-90 mt-2">Keep Going</div>
               </div>
             </div>
             <div className="text-center transform hover:scale-110 transition-transform">
-              <div className="bg-white/40 rounded-xl p-6 mb-2">
-                <div className="text-4xl font-bold">$1.2M+</div>
-                <div className="text-base opacity-90 mt-2">You Win! 🎉</div>
+              <div className="bg-white/40 rounded-xl p-3 sm:p-6 mb-2">
+                <div className="text-2xl sm:text-4xl font-bold">$1.2M+</div>
+                <div className="text-xs sm:text-base opacity-90 mt-2">You Win! 🎉</div>
               </div>
             </div>
           </div>
