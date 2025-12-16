@@ -22,11 +22,12 @@ const calculateCompound = (
   monthlyAmount: number,
   years: number,
   annualReturn: number,
+  initialInvestment: number = 0,
   contributionSchedule?: Array<{ age: number; amount: number }>
 ): Array<{ age: number; total: number; contributed: number; growth: number }> => {
   const data = [];
-  let balance = 0;
-  let totalContributed = 0;
+  let balance = initialInvestment;
+  let totalContributed = initialInvestment;
   const monthlyReturn = annualReturn / 100 / 12;
   const totalMonths = years * 12;
 
@@ -82,10 +83,12 @@ const KidsWealthBlueprint: React.FC = () => {
   
   // Interactive chart state
   const [startAge, setStartAge] = useState(0);
+  const [initialInvestment, setInitialInvestment] = useState(0);
   const [monthlyAmount, setMonthlyAmount] = useState(100);
   const [annualReturn, setAnnualReturn] = useState(8.0);
   const [targetAge, setTargetAge] = useState(28);
   const [monthlyInputFocused, setMonthlyInputFocused] = useState(false);
+  const [initialInvestmentFocused, setInitialInvestmentFocused] = useState(false);
   
   // Advanced contribution schedule (collapsible)
   const [showAdvancedContributions, setShowAdvancedContributions] = useState(false);
@@ -109,8 +112,8 @@ const KidsWealthBlueprint: React.FC = () => {
     const schedule = showAdvancedContributions && contributionSchedule.length > 0 
       ? contributionSchedule 
       : undefined;
-    return calculateCompound(startAge, monthlyAmount, years, annualReturn, schedule);
-  }, [startAge, monthlyAmount, annualReturn, targetAge, showAdvancedContributions, contributionSchedule]);
+    return calculateCompound(startAge, monthlyAmount, years, annualReturn, initialInvestment, schedule);
+  }, [startAge, monthlyAmount, annualReturn, targetAge, initialInvestment, showAdvancedContributions, contributionSchedule]);
 
   const finalAmount = chartData[chartData.length - 1]?.total || 0;
   const totalContributed = chartData[chartData.length - 1]?.contributed || 0;
@@ -315,7 +318,59 @@ const KidsWealthBlueprint: React.FC = () => {
           </p>
 
           {/* Interactive Controls */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
+            {/* Initial Investment Card */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-teal-200 card-interactive ripple-effect">
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4">
+                🎁 Initial Investment
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="100000"
+                step="1000"
+                value={initialInvestment}
+                onChange={(e) => setInitialInvestment(Number(e.target.value))}
+                className="w-full h-4 bg-teal-200 rounded-lg appearance-none cursor-pointer accent-teal-600 mb-3 transition-all duration-300 hover:accent-teal-700"
+              />
+              <div className="flex items-center gap-2 w-full min-w-0">
+                <span className="text-sm text-gray-500 flex-shrink-0">$</span>
+                <input
+                  type="text"
+                  value={initialInvestmentFocused ? initialInvestment.toString() : initialInvestment.toLocaleString()}
+                  onChange={(e) => {
+                    // Remove all non-numeric characters
+                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                    if (numericValue === '') {
+                      setInitialInvestment(0);
+                    } else {
+                      const num = Number(numericValue);
+                      if (!isNaN(num) && num >= 0) {
+                        setInitialInvestment(Math.min(1000000, num));
+                      }
+                    }
+                  }}
+                  onFocus={() => setInitialInvestmentFocused(true)}
+                  onBlur={() => {
+                    setInitialInvestmentFocused(false);
+                    if (initialInvestment > 1000000) setInitialInvestment(1000000);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.currentTarget.blur();
+                      setInitialInvestmentFocused(false);
+                      if (initialInvestment > 1000000) setInitialInvestment(1000000);
+                    }
+                  }}
+                  className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-teal-600 text-center border-2 border-teal-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-teal-500 input-interactive"
+                />
+              </div>
+              <div className="flex justify-between mt-2 text-xs text-gray-500">
+                <span>$0</span>
+                <span>$1M</span>
+              </div>
+            </div>
+
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-purple-200 card-interactive ripple-effect">
               <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4">
                 👶 Child's Age
