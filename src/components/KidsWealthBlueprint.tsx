@@ -784,12 +784,27 @@ const KidsWealthBlueprint: React.FC = () => {
                             const yearlyInvestment = monthlyAmount * 12;
                             const afterOneYear = yearlyInvestment * (1 + annualReturn / 100);
                             const growth = yearlyInvestment * annualReturn / 100;
+                            
+                            // Calculate 20-year projection
+                            const data20Years = calculateCompound(0, monthlyAmount, 20, annualReturn, 0);
+                            const after20Years = data20Years[data20Years.length - 1]?.total || 0;
+                            
+                            // Calculate 30-year projection
+                            const data30Years = calculateCompound(0, monthlyAmount, 30, annualReturn, 0);
+                            const after30Years = data30Years[data30Years.length - 1]?.total || 0;
+                            
                             return (
-                              <p className="text-xs sm:text-sm md:text-base text-gray-700">
-                                If you invest <strong>${yearlyInvestment.toLocaleString()}</strong> (${monthlyAmount.toLocaleString()}/month × 12) for <strong>one full year</strong> at {annualReturn}% annual return, 
-                                it grows to <strong className="text-green-700">${Math.round(afterOneYear).toLocaleString()}</strong>! 
-                                That's <strong className="text-green-700">${Math.round(growth).toLocaleString()}</strong> of <em>free money</em> you earned! 🎉
-                              </p>
+                              <>
+                                <p className="text-xs sm:text-sm md:text-base text-gray-700 mb-2">
+                                  If you invest <strong>${yearlyInvestment.toLocaleString()}</strong> (${monthlyAmount.toLocaleString()}/month × 12) for <strong>one full year</strong> at {annualReturn}% annual return, 
+                                  it grows to <strong className="text-green-700">${Math.round(afterOneYear).toLocaleString()}</strong>! 
+                                  That's <strong className="text-green-700">${Math.round(growth).toLocaleString()}</strong> of <em>free money</em> you earned! 🎉
+                                </p>
+                                <p className="text-xs sm:text-sm md:text-base text-gray-700">
+                                  And if you keep doing that for <strong>20 years</strong>, it would grow to <strong className="text-green-700">${after20Years.toLocaleString()}</strong>, 
+                                  and for <strong>30 years</strong> it would grow to <strong className="text-green-700">${after30Years.toLocaleString()}</strong>! 🚀
+                                </p>
+                              </>
                             );
                           })()}
                         </div>
