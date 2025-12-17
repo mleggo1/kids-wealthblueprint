@@ -984,42 +984,44 @@ const KidsWealthBlueprint: React.FC = () => {
               </LineChart>
             </ResponsiveContainer>
             
-            {/* Summary Stats - Positioned inside chart, dynamically sized */}
+            {/* Summary Stats - Positioned in white space of chart */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              {/* Position in upper right area, adapts to chart size */}
+              {/* Position in upper left white space area - avoids data lines */}
               <div 
-                className={`absolute pointer-events-auto flex flex-col gap-1.5 sm:gap-2 z-10 ${isMobile ? 'top-1.5 right-1.5' : 'top-3 right-3'}`}
+                className={`absolute pointer-events-auto flex flex-col gap-2 z-10 ${isMobile ? 'top-2 left-2' : 'top-4 left-4'}`}
                 style={{ 
-                  maxWidth: isMobile ? '120px' : maxValue > 1000000 ? '160px' : '150px',
-                  opacity: 0.95
+                  maxWidth: isMobile ? '130px' : maxValue > 1000000 ? '170px' : '160px'
                 }}
               >
                 <div 
-                  className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-1.5 sm:p-2 shadow-xl text-center text-white transform hover:scale-110 hover:shadow-2xl hover:z-20 transition-all duration-300 cursor-pointer backdrop-blur-sm border-2 border-white/30 hover:border-white/50"
+                  className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-xl p-2.5 sm:p-3 shadow-2xl text-center text-white transform hover:scale-105 hover:shadow-3xl hover:z-20 transition-all duration-300 cursor-pointer border-2 border-white/40 hover:border-white/60 backdrop-blur-md"
                   title={`Total value at age ${targetAge}`}
+                  style={{ boxShadow: '0 10px 25px rgba(37, 99, 235, 0.4)' }}
                 >
-                  <div className={`${isMobile ? 'text-base' : 'text-lg'} font-bold mb-0.5 leading-tight`}>
+                  <div className={`${isMobile ? 'text-lg' : 'text-xl sm:text-2xl'} font-extrabold mb-1 leading-tight`}>
                     ${finalAmount >= 1000000 ? `${(finalAmount / 1000000).toFixed(1)}M` : finalAmount >= 1000 ? `${(finalAmount / 1000).toFixed(0)}k` : finalAmount.toLocaleString()}
                   </div>
-                  <div className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-semibold opacity-90 leading-tight`}>Total at Age {targetAge}</div>
+                  <div className={`${isMobile ? 'text-[10px]' : 'text-xs sm:text-sm'} font-semibold opacity-95 leading-tight`}>Total at Age {targetAge}</div>
                 </div>
                 <div 
-                  className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg p-1.5 sm:p-2 shadow-xl text-center text-white transform hover:scale-110 hover:shadow-2xl hover:z-20 transition-all duration-300 cursor-pointer backdrop-blur-sm border-2 border-white/30 hover:border-white/50"
+                  className="bg-gradient-to-br from-green-500 via-green-600 to-green-700 rounded-xl p-2.5 sm:p-3 shadow-2xl text-center text-white transform hover:scale-105 hover:shadow-3xl hover:z-20 transition-all duration-300 cursor-pointer border-2 border-white/40 hover:border-white/60 backdrop-blur-md"
                   title="Total amount invested over time"
+                  style={{ boxShadow: '0 10px 25px rgba(16, 185, 129, 0.4)' }}
                 >
-                  <div className={`${isMobile ? 'text-base' : 'text-lg'} font-bold mb-0.5 leading-tight`}>
+                  <div className={`${isMobile ? 'text-lg' : 'text-xl sm:text-2xl'} font-extrabold mb-1 leading-tight`}>
                     ${totalContributed >= 1000000 ? `${(totalContributed / 1000000).toFixed(1)}M` : totalContributed >= 1000 ? `${(totalContributed / 1000).toFixed(0)}k` : totalContributed.toLocaleString()}
                   </div>
-                  <div className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-semibold opacity-90 leading-tight`}>Total Invested</div>
+                  <div className={`${isMobile ? 'text-[10px]' : 'text-xs sm:text-sm'} font-semibold opacity-95 leading-tight`}>Total Invested</div>
                 </div>
                 <div 
-                  className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-1.5 sm:p-2 shadow-xl text-center text-white transform hover:scale-110 hover:shadow-2xl hover:z-20 transition-all duration-300 cursor-pointer backdrop-blur-sm border-2 border-white/30 hover:border-white/50"
+                  className="bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700 rounded-xl p-2.5 sm:p-3 shadow-2xl text-center text-white transform hover:scale-105 hover:shadow-3xl hover:z-20 transition-all duration-300 cursor-pointer border-2 border-white/40 hover:border-white/60 backdrop-blur-md"
                   title="Growth from compounding interest"
+                  style={{ boxShadow: '0 10px 25px rgba(147, 51, 234, 0.4)' }}
                 >
-                  <div className={`${isMobile ? 'text-base' : 'text-lg'} font-bold mb-0.5 leading-tight`}>
+                  <div className={`${isMobile ? 'text-lg' : 'text-xl sm:text-2xl'} font-extrabold mb-1 leading-tight`}>
                     ${totalGrowth >= 1000000 ? `${(totalGrowth / 1000000).toFixed(1)}M` : totalGrowth >= 1000 ? `${(totalGrowth / 1000).toFixed(0)}k` : totalGrowth.toLocaleString()}
                   </div>
-                  <div className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-semibold opacity-90 leading-tight`}>Free Money!</div>
+                  <div className={`${isMobile ? 'text-[10px]' : 'text-xs sm:text-sm'} font-semibold opacity-95 leading-tight`}>Free Money!</div>
                 </div>
               </div>
             </div>
