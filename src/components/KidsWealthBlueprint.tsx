@@ -95,6 +95,9 @@ const KidsWealthBlueprint: React.FC = () => {
   const [contributionSchedule, setContributionSchedule] = useState<Array<{ age: number; amount: number }>>([]);
   const [focusedContributionIndex, setFocusedContributionIndex] = useState<number | null>(null);
   
+  // Educational section (collapsible)
+  const [showEducationalSection, setShowEducationalSection] = useState(true);
+  
   // Reset contribution schedule when opening the advanced section
   const handleToggleAdvancedContributions = () => {
     if (!showAdvancedContributions) {
@@ -746,9 +749,24 @@ const KidsWealthBlueprint: React.FC = () => {
               <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-4">
                 <span className="text-2xl sm:text-3xl md:text-4xl flex-shrink-0">⭐</span>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-3">
-                    💡 This is How You Build Wealth Through Investing!
-                  </h3>
+                  <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
+                    <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">
+                      💡 This is How You Build Wealth Through Investing!
+                    </h3>
+                    <button
+                      onClick={() => setShowEducationalSection(!showEducationalSection)}
+                      className="flex-shrink-0 text-green-700 hover:text-green-800 font-semibold text-sm sm:text-base px-3 py-1 rounded-lg hover:bg-green-100 transition-colors flex items-center gap-1"
+                      aria-label={showEducationalSection ? "Collapse section" : "Expand section"}
+                    >
+                      <span>{showEducationalSection ? "Collapse" : "Expand"}</span>
+                      <span className={`transform transition-transform duration-200 ${showEducationalSection ? 'rotate-180' : ''}`}>
+                        ▼
+                      </span>
+                    </button>
+                  </div>
+                  
+                  {showEducationalSection && (
+                    <div className="animate-in slide-in-from-top-2 duration-200">
                   
                   {/* What is Investing - Simple Explanation for Teenagers - more compact on mobile */}
                   <div className="bg-blue-50 border-2 border-blue-300 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 lg:p-5 mb-2 sm:mb-3 md:mb-4">
@@ -822,6 +840,8 @@ const KidsWealthBlueprint: React.FC = () => {
                       Watch the blue line in the chart below grow faster and faster over time. That's the magic of investing! ✨
                     </p>
                   </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
