@@ -96,7 +96,7 @@ const KidsWealthBlueprint: React.FC = () => {
   const [focusedContributionIndex, setFocusedContributionIndex] = useState<number | null>(null);
   
   // Educational section (collapsible)
-  const [showEducationalSection, setShowEducationalSection] = useState(true);
+  const [showEducationalSection, setShowEducationalSection] = useState(false);
   
   // Reset contribution schedule when opening the advanced section
   const handleToggleAdvancedContributions = () => {
@@ -740,25 +740,25 @@ const KidsWealthBlueprint: React.FC = () => {
           </div>
 
           {/* Educational Callout: Building Wealth Through Investing */}
-          <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-8 mb-4 sm:mb-6 border-2 sm:border-4 border-green-400 shadow-lg relative overflow-hidden">
+          <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 mb-2 sm:mb-3 border-2 border-green-400 shadow-md relative overflow-hidden">
             {/* Decorative elements - smaller on mobile */}
-            <div className="absolute top-1 right-1 sm:top-2 sm:right-2 text-4xl sm:text-6xl md:text-7xl opacity-10">💰</div>
-            <div className="absolute bottom-1 left-1 sm:bottom-2 sm:left-2 text-3xl sm:text-5xl md:text-6xl opacity-10">📈</div>
+            <div className="absolute top-1 right-1 text-3xl sm:text-4xl opacity-10">💰</div>
+            <div className="absolute bottom-1 left-1 text-2xl sm:text-3xl opacity-10">📈</div>
             
             <div className="relative z-10">
-              <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-4">
-                <span className="text-2xl sm:text-3xl md:text-4xl flex-shrink-0">⭐</span>
+              <div className="flex items-start gap-1.5 sm:gap-2 mb-1 sm:mb-2">
+                <span className="text-xl sm:text-2xl flex-shrink-0">⭐</span>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
-                    <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-900">
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
                       💡 This is How You Build Wealth Through Investing!
                     </h3>
                     <button
                       onClick={() => setShowEducationalSection(!showEducationalSection)}
-                      className="flex-shrink-0 text-green-700 hover:text-green-800 font-semibold text-sm sm:text-base px-3 py-1 rounded-lg hover:bg-green-100 transition-colors flex items-center gap-1"
-                      aria-label={showEducationalSection ? "Collapse section" : "Expand section"}
+                      className="flex-shrink-0 text-green-700 hover:text-green-800 font-medium text-xs sm:text-sm px-2 py-0.5 rounded hover:bg-green-100 transition-colors flex items-center gap-1"
+                      aria-label={showEducationalSection ? "Hide section" : "Show section"}
                     >
-                      <span>{showEducationalSection ? "Collapse" : "Expand"}</span>
+                      <span>{showEducationalSection ? "Hide" : "Show"}</span>
                       <span className={`transform transition-transform duration-200 ${showEducationalSection ? 'rotate-180' : ''}`}>
                         ▼
                       </span>
@@ -766,42 +766,42 @@ const KidsWealthBlueprint: React.FC = () => {
                   </div>
                   
                   {showEducationalSection && (
-                    <div className="animate-in slide-in-from-top-2 duration-200">
+                    <div className="animate-in slide-in-from-top-2 duration-200 space-y-1.5 sm:space-y-2">
                   
-                  {/* What is Investing - Simple Explanation for Teenagers - more compact on mobile */}
-                  <div className="bg-blue-50 border-2 border-blue-300 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 lg:p-5 mb-2 sm:mb-3 md:mb-4">
-                    <h4 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 mb-1 sm:mb-2">🤔 What is Investing?</h4>
-                    <p className="text-xs sm:text-sm md:text-base text-gray-700 leading-relaxed mb-2 sm:mb-3">
+                  {/* What is Investing - Simple Explanation for Teenagers - more compact */}
+                  <div className="bg-blue-50 border border-blue-300 rounded-lg p-1.5 sm:p-2 mb-1 sm:mb-1.5">
+                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 mb-0.5">🤔 What is Investing?</h4>
+                    <p className="text-xs text-gray-700 leading-snug mb-1">
                       <strong>Investing</strong> is like planting a money tree! Instead of keeping your money in a piggy bank where it just sits there, you put it to work. 
                       You buy small pieces of companies (called stocks) or funds. As those companies grow, your money grows too! 🚀
                     </p>
-                    <p className="text-xs sm:text-sm md:text-base text-gray-700 leading-relaxed">
+                    <p className="text-xs text-gray-700 leading-snug">
                       <strong>Think of it this way:</strong> If you save $100, you still have $100 a year later. 
                       But if you <strong className="text-green-700">invest</strong> that $100, it can grow to $108, $114, or more - 
                       without you doing anything except being patient!
                     </p>
                   </div>
                   
-                  <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-700 leading-relaxed mb-2 sm:mb-3 md:mb-4">
+                  <p className="text-xs text-gray-700 leading-snug mb-1">
                     The <strong className="text-green-700">Return %</strong> above shows how much your money grows <strong>each full year</strong> when you <strong className="text-green-700">invest</strong> it!
                   </p>
                   
-                  <div className="bg-white/80 rounded-lg sm:rounded-xl p-2 sm:p-3 md:p-4 lg:p-5 border-2 border-green-300 mb-2 sm:mb-3 md:mb-4">
-                    <div className="space-y-2 sm:space-y-3">
-                      <div className="flex items-start gap-2 sm:gap-3">
-                        <span className="text-xl sm:text-2xl flex-shrink-0">🐷</span>
+                  <div className="bg-white/80 rounded-lg p-1.5 sm:p-2 border border-green-300 mb-1 sm:mb-1.5">
+                    <div className="space-y-1.5">
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-lg flex-shrink-0">🐷</span>
                         <div className="min-w-0">
-                          <p className="font-bold text-gray-900 text-xs sm:text-sm md:text-base">Just Saving (Piggy Bank):</p>
-                          <p className="text-xs sm:text-sm md:text-base text-gray-700">
+                          <p className="font-bold text-gray-900 text-xs">Just Saving (Piggy Bank):</p>
+                          <p className="text-xs text-gray-700">
                             Your ${(monthlyAmount * 12).toLocaleString()}/year stays ${(monthlyAmount * 12).toLocaleString()}. No growth. 😴
                           </p>
                         </div>
                       </div>
                       
-                      <div className="flex items-start gap-2 sm:gap-3">
-                        <span className="text-xl sm:text-2xl flex-shrink-0">🚀</span>
+                      <div className="flex items-start gap-1.5">
+                        <span className="text-lg flex-shrink-0">🚀</span>
                         <div className="min-w-0">
-                          <p className="font-bold text-green-700 text-xs sm:text-sm md:text-base">Investing (Like This Chart!):</p>
+                          <p className="font-bold text-green-700 text-xs">Investing (Like This Chart!):</p>
                           {(() => {
                             const yearlyInvestment = monthlyAmount * 12;
                             const afterOneYear = yearlyInvestment * (1 + annualReturn / 100);
@@ -817,12 +817,12 @@ const KidsWealthBlueprint: React.FC = () => {
                             
                             return (
                               <>
-                                <p className="text-xs sm:text-sm md:text-base text-gray-700 mb-2">
+                                <p className="text-xs text-gray-700 mb-1">
                                   If you invest <strong>${yearlyInvestment.toLocaleString()}</strong> (${monthlyAmount.toLocaleString()}/month × 12) for <strong>one full year</strong> at {annualReturn}% annual return, 
                                   it grows to <strong className="text-green-700">${Math.round(afterOneYear).toLocaleString()}</strong>! 
                                   That's <strong className="text-green-700">${Math.round(growth).toLocaleString()}</strong> of <em>free money</em> you earned! 🎉
                                 </p>
-                                <p className="text-xs sm:text-sm md:text-base text-gray-700">
+                                <p className="text-xs text-gray-700">
                                   And if you keep doing that for <strong>20 years</strong>, it would grow to <strong className="text-green-700">${after20Years.toLocaleString()}</strong>, 
                                   and for <strong>30 years</strong> it would grow to <strong className="text-green-700">${after30Years.toLocaleString()}</strong>! 🚀
                                 </p>
@@ -834,8 +834,8 @@ const KidsWealthBlueprint: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div className="bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg p-2 sm:p-3 md:p-4">
-                    <p className="text-xs sm:text-sm md:text-base text-gray-800 font-semibold">
+                  <div className="bg-yellow-50 border-l-2 border-yellow-400 rounded-r p-1.5 sm:p-2">
+                    <p className="text-xs text-gray-800 font-semibold">
                       💰 <strong>The Secret:</strong> When you invest, your money makes money. Then that money makes more money. That's called <strong className="text-green-700">compounding</strong> - and it's how real wealth is built! 
                       Watch the blue line in the chart below grow faster and faster over time. That's the magic of investing! ✨
                     </p>
