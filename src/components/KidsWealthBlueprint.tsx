@@ -98,6 +98,9 @@ const KidsWealthBlueprint: React.FC = () => {
   // Educational section (collapsible)
   const [showEducationalSection, setShowEducationalSection] = useState(false);
   
+  // Why This Matters section (collapsible)
+  const [showWhyThisMatters, setShowWhyThisMatters] = useState(false);
+  
   // Reset contribution schedule when opening the advanced section
   const handleToggleAdvancedContributions = () => {
     if (!showAdvancedContributions) {
@@ -268,45 +271,60 @@ const KidsWealthBlueprint: React.FC = () => {
       {/* Why This Matters */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg border border-gray-100 card-interactive">
-          <h2 className="text-xl font-bold text-gray-900 mb-3 text-center">Kids Wealth Blueprint — Why This Matters</h2>
-          <div className="max-w-4xl mx-auto space-y-2 text-base text-gray-700 leading-relaxed">
-            <p>
-              Give your kids the gift most adults wish they had — a clear, confident start with money. Show them the magic of starting early, so they grow up empowered instead of stressed or wishing someone had taught them sooner.
-            </p>
-            
-            <p className="text-lg font-semibold text-gray-900">
-              This blueprint gives your kids a better path.
-            </p>
-            
-            <p>
-              It's simple, long-term, and doesn't rely on picking winning stocks. It teaches the real secret:
-            </p>
-            
-            <ul className="space-y-0.5 list-disc list-inside ml-4 text-base">
-              <li>start early</li>
-              <li>stay consistent</li>
-              <li>let compounding do the work</li>
-            </ul>
-            
-            <p>
-              Kids who learn this young grow up confident, in control, and ahead of everyone else. 
-              Money becomes something they understand — not something they fear.
-            </p>
-            
-            <p>
-              This money could be used for their first car, their first home, starting a business, 
-              traveling the world, or simply having the freedom to make choices without financial stress. 
-              It helps set them up for life — giving them options, security, and the confidence to 
-              pursue their dreams. That's a really positive thing.
-            </p>
-            
-            <div className="bg-blue-50 rounded-xl p-3 border-l-4 border-blue-600 mt-2">
-              <p className="text-lg font-semibold text-gray-900 mb-0.5">And the best part?</p>
-              <p className="text-base text-gray-800">
-                It's easy enough for your kids to follow… yet powerful enough to shape their entire financial future.
-              </p>
-            </div>
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <h2 className="text-xl font-bold text-gray-900">Kids Wealth Blueprint — Why This Matters</h2>
+            <button
+              onClick={() => setShowWhyThisMatters(!showWhyThisMatters)}
+              className="flex-shrink-0 text-gray-700 hover:text-gray-800 font-medium text-sm px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-1"
+              aria-label={showWhyThisMatters ? "Hide section" : "Show section"}
+            >
+              <span>{showWhyThisMatters ? "Hide" : "Show"}</span>
+              <span className={`transform transition-transform duration-200 ${showWhyThisMatters ? 'rotate-180' : ''}`}>
+                ▼
+              </span>
+            </button>
           </div>
+          
+          {showWhyThisMatters && (
+            <div className="max-w-4xl mx-auto space-y-2 text-base text-gray-700 leading-relaxed animate-in slide-in-from-top-2 duration-200">
+              <p>
+                Give your kids the gift most adults wish they had — a clear, confident start with money. Show them the magic of starting early, so they grow up empowered instead of stressed or wishing someone had taught them sooner.
+              </p>
+              
+              <p className="text-lg font-semibold text-gray-900">
+                This blueprint gives your kids a better path.
+              </p>
+              
+              <p>
+                It's simple, long-term, and doesn't rely on picking winning stocks. It teaches the real secret:
+              </p>
+              
+              <ul className="space-y-0.5 list-disc list-inside ml-4 text-base">
+                <li>start early</li>
+                <li>stay consistent</li>
+                <li>let compounding do the work</li>
+              </ul>
+              
+              <p>
+                Kids who learn this young grow up confident, in control, and ahead of everyone else. 
+                Money becomes something they understand — not something they fear.
+              </p>
+              
+              <p>
+                This money could be used for their first car, their first home, starting a business, 
+                traveling the world, or simply having the freedom to make choices without financial stress. 
+                It helps set them up for life — giving them options, security, and the confidence to 
+                pursue their dreams. That's a really positive thing.
+              </p>
+              
+              <div className="bg-blue-50 rounded-xl p-3 border-l-4 border-blue-600 mt-2">
+                <p className="text-lg font-semibold text-gray-900 mb-0.5">And the best part?</p>
+                <p className="text-base text-gray-800">
+                  It's easy enough for your kids to follow… yet powerful enough to shape their entire financial future.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
