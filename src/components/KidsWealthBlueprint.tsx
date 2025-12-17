@@ -866,7 +866,7 @@ const KidsWealthBlueprint: React.FC = () => {
           </div>
 
           {/* Chart */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 sm:p-3 shadow-lg mb-8 w-full card-interactive">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 sm:p-3 shadow-lg mb-8 w-full card-interactive relative">
             <ResponsiveContainer width="100%" height={isMobile ? 400 : 550}>
               <LineChart 
                 data={chartData} 
@@ -983,27 +983,45 @@ const KidsWealthBlueprint: React.FC = () => {
                 />
               </LineChart>
             </ResponsiveContainer>
-          </div>
-
-          {/* Summary Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
-            <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-4 sm:p-8 shadow-xl text-center text-white transform hover:scale-105 transition-transform">
-              <div className="text-3xl sm:text-5xl font-bold mb-2 sm:mb-3">
-                ${finalAmount.toLocaleString()}
+            
+            {/* Summary Stats - Positioned inside chart, dynamically sized */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+              {/* Position in upper right area, adapts to chart size */}
+              <div 
+                className={`absolute pointer-events-auto flex flex-col gap-1.5 sm:gap-2 z-10 ${isMobile ? 'top-1.5 right-1.5' : 'top-3 right-3'}`}
+                style={{ 
+                  maxWidth: isMobile ? '120px' : maxValue > 1000000 ? '160px' : '150px',
+                  opacity: 0.95
+                }}
+              >
+                <div 
+                  className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg p-1.5 sm:p-2 shadow-xl text-center text-white transform hover:scale-110 hover:shadow-2xl hover:z-20 transition-all duration-300 cursor-pointer backdrop-blur-sm border-2 border-white/30 hover:border-white/50"
+                  title={`Total value at age ${targetAge}`}
+                >
+                  <div className={`${isMobile ? 'text-base' : 'text-lg'} font-bold mb-0.5 leading-tight`}>
+                    ${finalAmount >= 1000000 ? `${(finalAmount / 1000000).toFixed(1)}M` : finalAmount >= 1000 ? `${(finalAmount / 1000).toFixed(0)}k` : finalAmount.toLocaleString()}
+                  </div>
+                  <div className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-semibold opacity-90 leading-tight`}>Total at Age {targetAge}</div>
+                </div>
+                <div 
+                  className="bg-gradient-to-br from-green-500 to-green-600 rounded-lg p-1.5 sm:p-2 shadow-xl text-center text-white transform hover:scale-110 hover:shadow-2xl hover:z-20 transition-all duration-300 cursor-pointer backdrop-blur-sm border-2 border-white/30 hover:border-white/50"
+                  title="Total amount invested over time"
+                >
+                  <div className={`${isMobile ? 'text-base' : 'text-lg'} font-bold mb-0.5 leading-tight`}>
+                    ${totalContributed >= 1000000 ? `${(totalContributed / 1000000).toFixed(1)}M` : totalContributed >= 1000 ? `${(totalContributed / 1000).toFixed(0)}k` : totalContributed.toLocaleString()}
+                  </div>
+                  <div className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-semibold opacity-90 leading-tight`}>Total Invested</div>
+                </div>
+                <div 
+                  className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg p-1.5 sm:p-2 shadow-xl text-center text-white transform hover:scale-110 hover:shadow-2xl hover:z-20 transition-all duration-300 cursor-pointer backdrop-blur-sm border-2 border-white/30 hover:border-white/50"
+                  title="Growth from compounding interest"
+                >
+                  <div className={`${isMobile ? 'text-base' : 'text-lg'} font-bold mb-0.5 leading-tight`}>
+                    ${totalGrowth >= 1000000 ? `${(totalGrowth / 1000000).toFixed(1)}M` : totalGrowth >= 1000 ? `${(totalGrowth / 1000).toFixed(0)}k` : totalGrowth.toLocaleString()}
+                  </div>
+                  <div className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-semibold opacity-90 leading-tight`}>Free Money!</div>
+                </div>
               </div>
-              <div className="text-sm sm:text-lg font-semibold">Total at Age {targetAge}</div>
-            </div>
-            <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-4 sm:p-8 shadow-xl text-center text-white transform hover:scale-105 transition-transform">
-              <div className="text-3xl sm:text-5xl font-bold mb-2 sm:mb-3">
-                ${totalContributed.toLocaleString()}
-              </div>
-              <div className="text-sm sm:text-lg font-semibold">Total Invested</div>
-            </div>
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-4 sm:p-8 shadow-xl text-center text-white transform hover:scale-105 transition-transform">
-              <div className="text-3xl sm:text-5xl font-bold mb-2 sm:mb-3">
-                ${totalGrowth.toLocaleString()}
-              </div>
-              <div className="text-sm sm:text-lg font-semibold">Free Money from Growth!</div>
             </div>
           </div>
 
