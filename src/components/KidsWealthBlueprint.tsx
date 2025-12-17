@@ -311,7 +311,7 @@ const KidsWealthBlueprint: React.FC = () => {
               </p>
               
               <p>
-                This money could be used for their first car, their first home, starting a business, 
+                This money could be used for their education, first car, their first home, starting a business, 
                 traveling the world, or simply having the freedom to make choices without financial stress. 
                 It helps set them up for life — giving them options, security, and the confidence to 
                 pursue their dreams. That's a really positive thing.
