@@ -318,10 +318,10 @@ const KidsWealthBlueprint: React.FC = () => {
           </p>
 
           {/* Interactive Controls */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 items-start">
             {/* Initial Investment Card */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-teal-200 card-interactive ripple-effect">
-              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-teal-200 card-interactive ripple-effect flex flex-col">
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4 min-h-[3rem]">
                 🎁 Initial Investment
               </label>
               <input
@@ -362,7 +362,7 @@ const KidsWealthBlueprint: React.FC = () => {
                       if (initialInvestment > 1000000) setInitialInvestment(1000000);
                     }
                   }}
-                  className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-teal-600 text-center border-2 border-teal-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-teal-500 input-interactive"
+                  className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-teal-600 text-center border-2 border-teal-300 rounded-lg py-2 px-2 h-12 focus:outline-none focus:ring-2 focus:ring-teal-500 input-interactive"
                 />
               </div>
               <div className="flex justify-between mt-2 text-xs text-gray-500">
@@ -371,8 +371,8 @@ const KidsWealthBlueprint: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-purple-200 card-interactive ripple-effect">
-              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-purple-200 card-interactive ripple-effect flex flex-col">
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4 min-h-[3rem]">
                 👶 Child's Age
               </label>
               <input
@@ -413,12 +413,12 @@ const KidsWealthBlueprint: React.FC = () => {
                     e.currentTarget.blur();
                   }
                 }}
-                className="w-full text-xl sm:text-2xl font-bold text-purple-600 text-center border-2 border-purple-300 rounded-lg py-2 px-2 sm:px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 input-interactive"
+                className="w-full text-xl sm:text-2xl font-bold text-purple-600 text-center border-2 border-purple-300 rounded-lg py-2 px-2 h-12 focus:outline-none focus:ring-2 focus:ring-purple-500 input-interactive"
               />
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-blue-200 overflow-hidden card-interactive ripple-effect">
-              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-blue-200 overflow-hidden card-interactive ripple-effect flex flex-col">
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4 min-h-[3rem]">
                 💵 Monthly Investment
               </label>
               <input
@@ -459,7 +459,7 @@ const KidsWealthBlueprint: React.FC = () => {
                       if (monthlyAmount > 5000) setMonthlyAmount(5000);
                     }
                   }}
-                  className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-blue-600 text-center border-2 border-blue-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500 input-interactive"
+                  className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-blue-600 text-center border-2 border-blue-300 rounded-lg py-2 px-2 h-12 focus:outline-none focus:ring-2 focus:ring-blue-500 input-interactive"
                 />
               </div>
               <div className="flex justify-between mt-2 text-xs text-gray-500">
@@ -636,13 +636,14 @@ const KidsWealthBlueprint: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-green-200 card-interactive ripple-effect relative">
-              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-green-200 card-interactive ripple-effect relative flex flex-col">
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4 min-h-[3rem]">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span>📈 Return (% per year)</span>
+                  <span>📈 Return</span>
                   <span className="text-yellow-500 text-xl sm:text-2xl animate-pulse" id="return-star" title="Learn about investing below!">⭐</span>
                   <span className="text-green-600 text-base sm:text-lg animate-bounce">↓</span>
                 </div>
+                <div className="text-sm sm:text-base font-bold text-gray-800">(% per year)</div>
                 <p className="text-xs sm:text-sm text-green-700 font-medium mt-1 italic">This is how investing grows your money! See below ↓</p>
               </label>
               <input
@@ -678,7 +679,7 @@ const KidsWealthBlueprint: React.FC = () => {
                       e.currentTarget.blur();
                     }
                   }}
-                  className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-green-600 text-center border-2 border-green-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-green-500 input-interactive"
+                  className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-green-600 text-center border-2 border-green-300 rounded-lg py-2 px-2 h-12 focus:outline-none focus:ring-2 focus:ring-green-500 input-interactive"
                 />
                 <span className="text-sm text-gray-500 flex-shrink-0">%</span>
               </div>
@@ -688,8 +689,8 @@ const KidsWealthBlueprint: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-orange-200 card-interactive ripple-effect">
-              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-orange-200 card-interactive ripple-effect flex flex-col">
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4 min-h-[3rem]">
                 🎯 Target Age
               </label>
               <input
@@ -725,7 +726,7 @@ const KidsWealthBlueprint: React.FC = () => {
                       e.currentTarget.blur();
                     }
                   }}
-                  className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-orange-600 text-center border-2 border-orange-300 rounded-lg py-2 px-2 focus:outline-none focus:ring-2 focus:ring-orange-500 input-interactive"
+                  className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-orange-600 text-center border-2 border-orange-300 rounded-lg py-2 px-2 h-12 focus:outline-none focus:ring-2 focus:ring-orange-500 input-interactive"
                 />
                 <span className="text-sm text-gray-500 flex-shrink-0">years</span>
               </div>
