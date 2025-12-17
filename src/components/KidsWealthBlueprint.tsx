@@ -397,20 +397,18 @@ const KidsWealthBlueprint: React.FC = () => {
                     } else {
                       const num = Number(numericValue);
                       if (!isNaN(num) && num >= 0) {
-                        setInitialInvestment(Math.min(100000, num));
+                        setInitialInvestment(num);
                       }
                     }
                   }}
                   onFocus={() => setInitialInvestmentFocused(true)}
                   onBlur={() => {
                     setInitialInvestmentFocused(false);
-                    if (initialInvestment > 100000) setInitialInvestment(100000);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.currentTarget.blur();
                       setInitialInvestmentFocused(false);
-                      if (initialInvestment > 100000) setInitialInvestment(100000);
                     }
                   }}
                   className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-teal-600 text-center border-2 border-teal-300 rounded-lg py-2 px-2 h-12 focus:outline-none focus:ring-2 focus:ring-teal-500 input-interactive"
