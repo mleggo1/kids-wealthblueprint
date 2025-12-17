@@ -446,20 +446,18 @@ const KidsWealthBlueprint: React.FC = () => {
                     } else {
                       const num = Number(numericValue);
                       if (!isNaN(num) && num >= 0) {
-                        setMonthlyAmount(Math.min(5000, num));
+                        setMonthlyAmount(num);
                       }
                     }
                   }}
                   onFocus={() => setMonthlyInputFocused(true)}
                   onBlur={() => {
                     setMonthlyInputFocused(false);
-                    if (monthlyAmount > 5000) setMonthlyAmount(5000);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.currentTarget.blur();
                       setMonthlyInputFocused(false);
-                      if (monthlyAmount > 5000) setMonthlyAmount(5000);
                     }
                   }}
                   className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-blue-600 text-center border-2 border-blue-300 rounded-lg py-2 px-2 h-12 focus:outline-none focus:ring-2 focus:ring-blue-500 input-interactive"
@@ -576,8 +574,8 @@ const KidsWealthBlueprint: React.FC = () => {
                                 }
                               }}
                               onBlur={() => {
-                                // Clamp to valid range on blur
-                                const newAmount = Math.max(0, Math.min(5000, entry.amount));
+                                // Clamp to valid range on blur (minimum 0, no maximum)
+                                const newAmount = Math.max(0, entry.amount);
                                 if (newAmount !== entry.amount) {
                                   const updated = [...contributionSchedule];
                                   updated[index] = { ...updated[index], amount: newAmount };
