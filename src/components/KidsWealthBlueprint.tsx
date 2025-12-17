@@ -379,7 +379,7 @@ const KidsWealthBlueprint: React.FC = () => {
                 type="range"
                 min="0"
                 max="100000"
-                step="1000"
+                step="500"
                 value={initialInvestment}
                 onChange={(e) => setInitialInvestment(Number(e.target.value))}
                 className="w-full h-4 bg-teal-200 rounded-lg appearance-none cursor-pointer accent-teal-600 mb-3 transition-all duration-300 hover:accent-teal-700"
@@ -397,20 +397,20 @@ const KidsWealthBlueprint: React.FC = () => {
                     } else {
                       const num = Number(numericValue);
                       if (!isNaN(num) && num >= 0) {
-                        setInitialInvestment(Math.min(1000000, num));
+                        setInitialInvestment(Math.min(100000, num));
                       }
                     }
                   }}
                   onFocus={() => setInitialInvestmentFocused(true)}
                   onBlur={() => {
                     setInitialInvestmentFocused(false);
-                    if (initialInvestment > 1000000) setInitialInvestment(1000000);
+                    if (initialInvestment > 100000) setInitialInvestment(100000);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.currentTarget.blur();
                       setInitialInvestmentFocused(false);
-                      if (initialInvestment > 1000000) setInitialInvestment(1000000);
+                      if (initialInvestment > 100000) setInitialInvestment(100000);
                     }
                   }}
                   className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-teal-600 text-center border-2 border-teal-300 rounded-lg py-2 px-2 h-12 focus:outline-none focus:ring-2 focus:ring-teal-500 input-interactive"
@@ -418,7 +418,7 @@ const KidsWealthBlueprint: React.FC = () => {
               </div>
               <div className="flex justify-between mt-2 text-xs text-gray-500">
                 <span>$0</span>
-                <span>$1M</span>
+                <span>$100k</span>
               </div>
             </div>
 
