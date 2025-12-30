@@ -5,7 +5,7 @@ interface PasswordGateProps {
   appName?: string;
 }
 
-const PasswordGate: React.FC<PasswordGateProps> = ({ children, appName = 'Kids Wealth Blueprint' }) => {
+const PasswordGate: React.FC<PasswordGateProps> = ({ children, appName = 'Family Wealth Blueprint' }) => {
   const [input, setInput] = useState('');
   const [error, setError] = useState('');
   const [authed, setAuthed] = useState(false);

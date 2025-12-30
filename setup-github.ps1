@@ -1,5 +1,5 @@
 # GitHub Repository Setup Script
-Write-Host "`n=== Kids Wealth Blueprint - GitHub Setup ===" -ForegroundColor Cyan
+Write-Host "`n=== Family Wealth Blueprint - GitHub Setup ===" -ForegroundColor Cyan
 Write-Host "`nRepository will be created as: kids-wealthblueprint" -ForegroundColor Yellow
 
 $repoUrl = "https://github.com/mleggo1/kids-wealthblueprint"

@@ -1060,7 +1060,7 @@ const FamilyWealthBlueprint: React.FC = () => {
         </div>
       </section>
 
-      {/* 7-Step Kids Wealth Blueprint */}
+      {/* 7-Step Family Wealth Blueprint */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
           7-Step Family Wealth Blueprint

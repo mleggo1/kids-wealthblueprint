@@ -1,13 +1,13 @@
-# Kids Wealth Blueprint
+# Family Wealth Blueprint
 
-A beautiful, interactive web component for teaching parents and teenagers about long-term wealth building through saving, investing, and compounding.
+A beautiful, interactive web component for teaching adults about long-term wealth building through saving, investing, and compounding.
 
 ## Features
 
 - 🎨 **Visually Stunning Design** - Clean, modern UI with lots of white space
-- 📊 **Interactive Compounding Chart** - Kid-friendly sliders to visualize how money grows over time
+- 📊 **Interactive Compounding Chart** - User-friendly sliders to visualize how money grows over time
 - 📱 **Fully Responsive** - Works beautifully on desktop, tablet, and mobile
-- 🎯 **7-Step Blueprint** - Clear, actionable steps for building wealth from a young age
+- 🎯 **7-Step Blueprint** - Clear, actionable steps for building wealth
 - ⚡ **Built with React + TypeScript** - Type-safe and maintainable
 - 🎨 **Tailwind CSS** - Easy to customize and adapt to your brand
 
@@ -44,10 +44,10 @@ The component is already set up as a standalone page. Just run `npm run dev` and
 Import and use the component in your existing React app:
 
 ```tsx
-import KidsWealthBlueprint from './components/KidsWealthBlueprint'
+import FamilyWealthBlueprint from './components/FamilyWealthBlueprint'
 
 function MyPage() {
-  return <KidsWealthBlueprint />
+  return <FamilyWealthBlueprint />
 }
 ```
 
@@ -90,7 +90,7 @@ The compounding chart includes:
 
 ## Credits
 
-Built with inspiration from the "ultimate-target" component, designed to be kid-friendly and educational.
+Built with inspiration from the "ultimate-target" component, designed to be user-friendly and educational.
 
 ---
 
