@@ -1,10 +1,10 @@
-import KidsWealthBlueprint from './components/KidsWealthBlueprint'
+import FamilyWealthBlueprint from './components/FamilyWealthBlueprint'
 import PasswordGate from './components/PasswordGate'
 
 function App() {
   return (
-    <PasswordGate appName="Kids Wealth Blueprint">
-      <KidsWealthBlueprint />
+    <PasswordGate appName="Family Wealth Blueprint">
+      <FamilyWealthBlueprint />
     </PasswordGate>
   )
 }
