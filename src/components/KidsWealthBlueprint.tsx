@@ -340,21 +340,25 @@ const KidsWealthBlueprint: React.FC = () => {
 
           {/* Interactive Controls */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 items-start">
-            {/* Child's Age Card - First */}
+            {/* Current Age Card - First */}
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-purple-200 card-interactive ripple-effect flex flex-col">
               <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4 min-h-[3rem]">
-                👶 Child's Age
+                👶 Current Age
               </label>
               <input
                 type="range"
                 min="0"
-                max="25"
+                max={Math.max(0, targetAge - 1)}
                 step="1"
                 value={startAge}
                 onChange={(e) => {
                   const age = Number(e.target.value);
-                  setStartAge(age);
-                  if (age > targetAge) setTargetAge(age);
+                  const maxAge = Math.max(0, targetAge - 1);
+                  const clampedAge = Math.min(age, maxAge);
+                  setStartAge(clampedAge);
+                  if (clampedAge >= targetAge) {
+                    setTargetAge(clampedAge + 1);
+                  }
                 }}
                 className="w-full h-4 bg-purple-200 rounded-lg appearance-none cursor-pointer accent-purple-600 mb-3 transition-all duration-300 hover:accent-purple-700"
               />
@@ -369,16 +373,24 @@ const KidsWealthBlueprint: React.FC = () => {
                       setStartAge(0);
                     } else {
                       const age = Number(numericValue);
-                      if (!isNaN(age)) {
-                        setStartAge(age);
-                        if (age > targetAge) setTargetAge(age);
+                      if (!isNaN(age) && age >= 0) {
+                        const maxAge = Math.max(0, targetAge - 1);
+                        const clampedAge = Math.min(age, maxAge);
+                        setStartAge(clampedAge);
+                        if (clampedAge >= targetAge) {
+                          setTargetAge(clampedAge + 1);
+                        }
                       }
                     }
                   }}
                   onBlur={(e) => {
-                    const age = Math.max(0, Math.min(25, Number(e.target.value) || 0));
-                    setStartAge(age);
-                    if (age > targetAge) setTargetAge(age);
+                    const age = Number(e.target.value) || 0;
+                    const maxAge = Math.max(0, targetAge - 1);
+                    const clampedAge = Math.max(0, Math.min(maxAge, age));
+                    setStartAge(clampedAge);
+                    if (clampedAge >= targetAge) {
+                      setTargetAge(clampedAge + 1);
+                    }
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
@@ -718,11 +730,15 @@ const KidsWealthBlueprint: React.FC = () => {
               </label>
               <input
                 type="range"
-                min={startAge}
+                min={startAge + 1}
                 max="70"
                 step="1"
                 value={targetAge}
-                onChange={(e) => setTargetAge(Number(e.target.value))}
+                onChange={(e) => {
+                  const age = Number(e.target.value);
+                  const minAge = startAge + 1;
+                  setTargetAge(Math.max(minAge, age));
+                }}
                 className="w-full h-4 bg-orange-200 rounded-lg appearance-none cursor-pointer accent-orange-600 mb-3 transition-all duration-300 hover:accent-orange-700"
               />
               <div className="flex items-center gap-2 w-full min-w-0">
@@ -733,17 +749,19 @@ const KidsWealthBlueprint: React.FC = () => {
                   onChange={(e) => {
                     const numericValue = e.target.value.replace(/[^0-9]/g, '');
                     if (numericValue === '') {
-                      setTargetAge(startAge);
+                      setTargetAge(startAge + 1);
                     } else {
                       const age = Number(numericValue);
-                      if (!isNaN(age)) {
+                      if (!isNaN(age) && age > startAge) {
                         setTargetAge(age);
                       }
                     }
                   }}
                   onBlur={(e) => {
-                    const age = Math.max(startAge, Math.min(70, Number(e.target.value) || startAge));
-                    setTargetAge(age);
+                    const age = Number(e.target.value) || (startAge + 1);
+                    const minAge = startAge + 1;
+                    const clampedAge = Math.max(minAge, Math.min(70, age));
+                    setTargetAge(clampedAge);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
