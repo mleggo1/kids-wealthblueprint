@@ -731,7 +731,7 @@ const KidsWealthBlueprint: React.FC = () => {
               <input
                 type="range"
                 min={startAge + 1}
-                max="70"
+                max="100"
                 step="1"
                 value={targetAge}
                 onChange={(e) => {
@@ -760,7 +760,7 @@ const KidsWealthBlueprint: React.FC = () => {
                   onBlur={(e) => {
                     const age = Number(e.target.value) || (startAge + 1);
                     const minAge = startAge + 1;
-                    const clampedAge = Math.max(minAge, Math.min(70, age));
+                    const clampedAge = Math.max(minAge, Math.min(100, age));
                     setTargetAge(clampedAge);
                   }}
                   onKeyDown={(e) => {
