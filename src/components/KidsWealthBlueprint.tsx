@@ -248,17 +248,17 @@ const KidsWealthBlueprint: React.FC = () => {
         <div className="mb-6">
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-2">
             <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Family Wealth Blueprint
+              Kids Wealth Blueprint
             </span>
           </h1>
           <div className="h-1 w-32 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 mx-auto rounded-full"></div>
         </div>
         
         <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-          Set Your Family Up For Life
+          Set Your Kids Up For Life
         </h2>
         <p className="text-lg sm:text-xl text-gray-700 mb-6 max-w-3xl mx-auto">
-          A simple blueprint any family can use to help set themselves and their kids up financially.
+          A simple blueprint any parent can use to help set your kids up.
         </p>
         <a
           href="#watch-money-grow"
@@ -272,7 +272,7 @@ const KidsWealthBlueprint: React.FC = () => {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg border border-gray-100 card-interactive">
           <div className="flex items-center justify-between gap-2 mb-3">
-            <h2 className="text-xl font-bold text-gray-900">Family Wealth Blueprint — Why This Matters</h2>
+            <h2 className="text-xl font-bold text-gray-900">Kids Wealth Blueprint — Why This Matters</h2>
             <button
               onClick={() => setShowWhyThisMatters(!showWhyThisMatters)}
               className="flex-shrink-0 text-gray-700 hover:text-gray-800 font-medium text-sm px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-1"
@@ -311,7 +311,7 @@ const KidsWealthBlueprint: React.FC = () => {
               </p>
               
               <p>
-                This money could be used for their education, first car, their first home, starting a business, 
+                This money could be used for their first car, their first home, starting a business, 
                 traveling the world, or simply having the freedom to make choices without financial stress. 
                 It helps set them up for life — giving them options, security, and the confidence to 
                 pursue their dreams. That's a really positive thing.
@@ -1060,10 +1060,10 @@ const KidsWealthBlueprint: React.FC = () => {
         </div>
       </section>
 
-      {/* 7-Step Family Wealth Blueprint */}
+      {/* 7-Step Kids Wealth Blueprint */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
-          7-Step Family Wealth Blueprint
+          7-Step Kids Wealth Blueprint
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Step 1 */}
@@ -1209,7 +1209,7 @@ const KidsWealthBlueprint: React.FC = () => {
       {/* Quick Recap Checklist */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-          Quick Recap: The Family Wealth Blueprint
+          Quick Recap: The Kids Wealth Blueprint
         </h2>
         <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 sm:p-12 shadow-lg border border-gray-100 card-interactive">
           <ul className="space-y-4 text-lg text-gray-700 max-w-2xl mx-auto">
@@ -1248,11 +1248,11 @@ const KidsWealthBlueprint: React.FC = () => {
       <section id="kids-cta" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl p-8 sm:p-12 shadow-2xl text-white text-center">
           <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-            Ready to Build Your Family's Wealth Blueprint?
+            Ready to Build Your Kids' Wealth Blueprint?
           </h2>
           <p className="text-xl leading-relaxed mb-8 max-w-2xl mx-auto">
             I help parents and teenagers set this up in a simple, step-by-step way – no jargon, no pressure. 
-            If you'd like help designing a personalised Family Wealth Blueprint for your family, let's talk.
+            If you'd like help designing a personalised Kids Wealth Blueprint for your family, let's talk.
           </p>
           <a
             href="https://wealthbydesign.vercel.app/contact"
@@ -1260,7 +1260,7 @@ const KidsWealthBlueprint: React.FC = () => {
             rel="noopener noreferrer"
             className="inline-block bg-white text-blue-600 font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
           >
-            Book a Family Wealth Blueprint Session
+            Book a Kids Wealth Blueprint Session
           </a>
         </div>
       </section>
