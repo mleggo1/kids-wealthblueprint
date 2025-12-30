@@ -255,10 +255,10 @@ const KidsWealthBlueprint: React.FC = () => {
         </div>
         
         <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-          Set Your Kids Up For Life
+          Set Your Family Up For Life
         </h2>
         <p className="text-lg sm:text-xl text-gray-700 mb-6 max-w-3xl mx-auto">
-          A simple blueprint any parent can use to help set your kids up.
+          A simple blueprint any family can use to help set yourself and kids up financially.
         </p>
         <a
           href="#watch-money-grow"
