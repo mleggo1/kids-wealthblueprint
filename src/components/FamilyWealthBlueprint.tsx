@@ -16,14 +16,15 @@ const Icon = ({ emoji, className = '' }: { emoji: string; className?: string }) 
   <span className={`text-4xl ${className}`}>{emoji}</span>
 );
 
-// Compounding calculator with optional age-based contribution schedule
+// Compounding calculator with optional age-based contribution schedule and break periods
 const calculateCompound = (
   startAge: number,
   monthlyAmount: number,
   years: number,
   annualReturn: number,
   initialInvestment: number = 0,
-  contributionSchedule?: Array<{ age: number; amount: number }>
+  contributionSchedule?: Array<{ age: number; amount: number }>,
+  breakPeriods?: Array<{ fromAge: number; toAge: number }>
 ): Array<{ age: number; total: number; contributed: number; growth: number }> => {
   const data = [];
   let balance = initialInvestment;
@@ -31,25 +32,29 @@ const calculateCompound = (
   const monthlyReturn = annualReturn / 100 / 12;
   const totalMonths = years * 12;
 
-  // Helper to get monthly amount at a specific age
+  const isInBreak = (age: number): boolean => {
+    if (!breakPeriods || breakPeriods.length === 0) return false;
+    return breakPeriods.some((b) => age >= b.fromAge && age <= b.toAge);
+  };
+
   const getMonthlyAmountAtAge = (age: number): number => {
+    if (isInBreak(age)) return 0;
     if (!contributionSchedule || contributionSchedule.length === 0) {
       return monthlyAmount;
     }
-    // Sort schedule by age and find the most recent applicable amount
     const sorted = [...contributionSchedule].sort((a, b) => b.age - a.age);
     for (const entry of sorted) {
       if (age >= entry.age) {
         return entry.amount;
       }
     }
-    return monthlyAmount; // Default to base amount
+    return monthlyAmount;
   };
 
   for (let month = 0; month <= totalMonths; month++) {
     const currentAge = startAge + month / 12;
     const currentMonthlyAmount = getMonthlyAmountAtAge(currentAge);
-    
+
     if (month > 0) {
       balance = balance * (1 + monthlyReturn) + currentMonthlyAmount;
       totalContributed += currentMonthlyAmount;
@@ -84,16 +89,23 @@ const FamilyWealthBlueprint: React.FC = () => {
   // Interactive chart state
   const [startAge, setStartAge] = useState(30);
   const [initialInvestment, setInitialInvestment] = useState(0);
-  const [monthlyAmount, setMonthlyAmount] = useState(100);
+  const [monthlySuper, setMonthlySuper] = useState(50);
+  const [monthlyPersonal, setMonthlyPersonal] = useState(50);
+  const monthlyAmount = monthlySuper + monthlyPersonal;
   const [annualReturn, setAnnualReturn] = useState(8.0);
   const [targetAge, setTargetAge] = useState(65);
-  const [monthlyInputFocused, setMonthlyInputFocused] = useState(false);
+  const [monthlySuperFocused, setMonthlySuperFocused] = useState(false);
+  const [monthlyPersonalFocused, setMonthlyPersonalFocused] = useState(false);
   const [initialInvestmentFocused, setInitialInvestmentFocused] = useState(false);
-  
+
   // Advanced contribution schedule (collapsible)
   const [showAdvancedContributions, setShowAdvancedContributions] = useState(false);
   const [contributionSchedule, setContributionSchedule] = useState<Array<{ age: number; amount: number }>>([]);
   const [focusedContributionIndex, setFocusedContributionIndex] = useState<number | null>(null);
+
+  // Take a break (pause contributing for a period)
+  const [showTakeABreak, setShowTakeABreak] = useState(false);
+  const [breakPeriods, setBreakPeriods] = useState<Array<{ fromAge: number; toAge: number }>>([]);
   
   // Educational section (collapsible)
   const [showEducationalSection, setShowEducationalSection] = useState(false);
@@ -114,12 +126,12 @@ const FamilyWealthBlueprint: React.FC = () => {
   // Calculate chart data
   const chartData = useMemo(() => {
     const years = Math.max(1, targetAge - startAge);
-    // Use contribution schedule only if advanced section is open and has entries
-    const schedule = showAdvancedContributions && contributionSchedule.length > 0 
-      ? contributionSchedule 
+    const schedule = showAdvancedContributions && contributionSchedule.length > 0
+      ? contributionSchedule
       : undefined;
-    return calculateCompound(startAge, monthlyAmount, years, annualReturn, initialInvestment, schedule);
-  }, [startAge, monthlyAmount, annualReturn, targetAge, initialInvestment, showAdvancedContributions, contributionSchedule]);
+    const breaks = showTakeABreak && breakPeriods.length > 0 ? breakPeriods : undefined;
+    return calculateCompound(startAge, monthlyAmount, years, annualReturn, initialInvestment, schedule, breaks);
+  }, [startAge, monthlyAmount, annualReturn, targetAge, initialInvestment, showAdvancedContributions, contributionSchedule, showTakeABreak, breakPeriods]);
 
   const finalAmount = chartData[chartData.length - 1]?.total || 0;
   const totalContributed = chartData[chartData.length - 1]?.contributed || 0;
@@ -353,8 +365,8 @@ const FamilyWealthBlueprint: React.FC = () => {
                 value={startAge}
                 onChange={(e) => {
                   const age = Number(e.target.value);
-                  const maxAge = Math.max(0, targetAge - 1);
-                  const clampedAge = Math.min(age, maxAge);
+                  const maxAge = Math.max(18, targetAge - 1);
+                  const clampedAge = Math.max(18, Math.min(age, maxAge));
                   setStartAge(clampedAge);
                   if (clampedAge >= targetAge) {
                     setTargetAge(clampedAge + 1);
@@ -366,6 +378,7 @@ const FamilyWealthBlueprint: React.FC = () => {
                 <span className="text-sm text-gray-500 flex-shrink-0 w-4"></span>
                 <input
                   type="text"
+                  inputMode="numeric"
                   value={startAge}
                   onChange={(e) => {
                     const numericValue = e.target.value.replace(/[^0-9]/g, '');
@@ -373,15 +386,18 @@ const FamilyWealthBlueprint: React.FC = () => {
                       setStartAge(18);
                     } else {
                       const age = Number(numericValue);
-                      if (!isNaN(age) && age >= 18) {
-                        const maxAge = Math.max(18, targetAge - 1);
-                        const clampedAge = Math.min(age, maxAge);
-                        setStartAge(clampedAge);
-                        if (clampedAge >= targetAge) {
-                          setTargetAge(clampedAge + 1);
+                      if (!isNaN(age) && age >= 0 && age <= 120) {
+                        setStartAge(age);
+                        if (age >= targetAge) {
+                          setTargetAge(age + 1);
                         }
                       }
                     }
+                  }}
+                  onFocus={(e) => {
+                    setTimeout(() => {
+                      e.target.select();
+                    }, 0);
                   }}
                   onBlur={(e) => {
                     const age = Number(e.target.value) || 18;
@@ -421,6 +437,7 @@ const FamilyWealthBlueprint: React.FC = () => {
                 <span className="text-sm text-gray-500 flex-shrink-0">$</span>
                 <input
                   type="text"
+                  inputMode="numeric"
                   value={initialInvestmentFocused ? initialInvestment.toString() : initialInvestment.toLocaleString()}
                   onChange={(e) => {
                     // Remove all non-numeric characters
@@ -434,7 +451,12 @@ const FamilyWealthBlueprint: React.FC = () => {
                       }
                     }
                   }}
-                  onFocus={() => setInitialInvestmentFocused(true)}
+                  onFocus={(e) => {
+                    setInitialInvestmentFocused(true);
+                    setTimeout(() => {
+                      e.target.select();
+                    }, 0);
+                  }}
                   onBlur={() => {
                     setInitialInvestmentFocused(false);
                   }}
@@ -454,55 +476,144 @@ const FamilyWealthBlueprint: React.FC = () => {
             </div>
 
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-blue-200 overflow-hidden card-interactive ripple-effect flex flex-col">
-              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4 min-h-[3rem]">
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-2 min-h-[2rem]">
                 💵 Monthly Investment
               </label>
-              <input
-                type="range"
-                min="25"
-                max="5000"
-                step="25"
-                value={monthlyAmount}
-                onChange={(e) => setMonthlyAmount(Number(e.target.value))}
-                className="w-full h-4 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600 mb-3 transition-all duration-300 hover:accent-blue-700"
-              />
-              <div className="flex items-center gap-2 w-full min-w-0">
-                <span className="text-sm text-gray-500 flex-shrink-0">$</span>
-                <input
-                  type="text"
-                  value={monthlyInputFocused ? monthlyAmount.toString() : monthlyAmount.toLocaleString()}
-                  onChange={(e) => {
-                    // Remove all non-numeric characters
-                    const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                    if (numericValue === '') {
-                      setMonthlyAmount(0);
-                    } else {
-                      const num = Number(numericValue);
-                      if (!isNaN(num) && num >= 0) {
-                        setMonthlyAmount(num);
+              <p className="text-xs text-gray-600 mb-3">Super + personal (total drives the chart)</p>
+
+              {/* Monthly Super */}
+              <div className="mb-3">
+                <label id="monthly-super-label" className="block text-xs font-semibold text-gray-700 mb-1">Super ($/month)</label>
+                <div className="flex items-center gap-2 w-full min-w-0">
+                  <span className="text-sm text-gray-500 flex-shrink-0">$</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    aria-labelledby="monthly-super-label"
+                    value={monthlySuperFocused ? monthlySuper.toString() : monthlySuper.toLocaleString()}
+                    onChange={(e) => {
+                      const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                      if (numericValue === '') setMonthlySuper(0);
+                      else {
+                        const num = Number(numericValue);
+                        if (!isNaN(num) && num >= 0) setMonthlySuper(num);
                       }
-                    }
-                  }}
-                  onFocus={() => setMonthlyInputFocused(true)}
-                  onBlur={() => {
-                    setMonthlyInputFocused(false);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.currentTarget.blur();
-                      setMonthlyInputFocused(false);
-                    }
-                  }}
-                  className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-blue-600 text-center border-2 border-blue-300 rounded-lg py-2 px-2 h-12 focus:outline-none focus:ring-2 focus:ring-blue-500 input-interactive"
-                />
+                    }}
+                    onFocus={(e) => { setMonthlySuperFocused(true); setTimeout(() => e.target.select(), 0); }}
+                    onBlur={() => setMonthlySuperFocused(false)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
+                    className="flex-1 min-w-0 text-lg font-bold text-blue-600 text-center border-2 border-blue-300 rounded-lg py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-blue-500 input-interactive"
+                  />
+                </div>
               </div>
-              <div className="flex justify-between mt-2 text-xs text-gray-500">
-                <span>$25</span>
-                <span>$5,000</span>
+
+              {/* Monthly Personal */}
+              <div className="mb-2">
+                <label id="monthly-personal-label" className="block text-xs font-semibold text-gray-700 mb-1">Personal ($/month)</label>
+                <div className="flex items-center gap-2 w-full min-w-0">
+                  <span className="text-sm text-gray-500 flex-shrink-0">$</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    aria-labelledby="monthly-personal-label"
+                    value={monthlyPersonalFocused ? monthlyPersonal.toString() : monthlyPersonal.toLocaleString()}
+                    onChange={(e) => {
+                      const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                      if (numericValue === '') setMonthlyPersonal(0);
+                      else {
+                        const num = Number(numericValue);
+                        if (!isNaN(num) && num >= 0) setMonthlyPersonal(num);
+                      }
+                    }}
+                    onFocus={(e) => { setMonthlyPersonalFocused(true); setTimeout(() => e.target.select(), 0); }}
+                    onBlur={() => setMonthlyPersonalFocused(false)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
+                    className="flex-1 min-w-0 text-lg font-bold text-indigo-600 text-center border-2 border-indigo-300 rounded-lg py-1.5 px-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 input-interactive"
+                  />
+                </div>
               </div>
-              
+              <div className="text-sm font-bold text-gray-800 mb-3 pt-1 border-t border-blue-100">
+                Total: ${monthlyAmount.toLocaleString()}/month
+              </div>
+
+              {/* Take a break (pause contributing) */}
+              <div className="mb-4 pb-4 border-b border-blue-200">
+                <button
+                  onClick={() => {
+                    if (!showTakeABreak) setBreakPeriods([]);
+                    setShowTakeABreak(!showTakeABreak);
+                  }}
+                  className="w-full flex items-center justify-between text-sm text-amber-700 hover:text-amber-800 font-medium transition-colors"
+                >
+                  <span className="flex items-center gap-2">
+                    <span>⏸️</span>
+                    <span>Take a break from contributing?</span>
+                  </span>
+                  <span className={`transform transition-transform duration-200 ${showTakeABreak ? 'rotate-180' : ''}`}>
+                    ▼
+                  </span>
+                </button>
+                {showTakeABreak && (
+                  <div className="mt-3 space-y-3 animate-in slide-in-from-top-2 duration-200">
+                    <p className="text-xs text-gray-600">
+                      Pause contributions for a period (e.g. use the money for something else). Your balance still grows from returns; you just don’t add new money during the break.
+                    </p>
+                    {breakPeriods.map((bp, index) => (
+                      <div key={index} className="bg-amber-50 rounded-lg p-3 relative flex flex-wrap items-center gap-2">
+                        <span className="text-xs text-gray-700">From age</span>
+                        <input
+                          type="number"
+                          min={startAge}
+                          max={targetAge - 1}
+                          value={bp.fromAge}
+                          aria-label={`Break ${index + 1} start age`}
+                          onChange={(e) => {
+                            const from = Math.max(startAge, Math.min(targetAge - 1, Number(e.target.value) || startAge));
+                            const updated = [...breakPeriods];
+                            updated[index] = { ...updated[index], fromAge: from };
+                            if (updated[index].toAge < from) updated[index].toAge = from;
+                            setBreakPeriods(updated);
+                          }}
+                          className="w-14 text-sm font-bold text-center border border-amber-300 rounded px-1 py-1"
+                        />
+                        <span className="text-xs text-gray-700">to</span>
+                        <input
+                          type="number"
+                          min={bp.fromAge}
+                          max={targetAge}
+                          value={bp.toAge}
+                          aria-label={`Break ${index + 1} end age`}
+                          onChange={(e) => {
+                            const to = Math.max(bp.fromAge, Math.min(targetAge, Number(e.target.value) || bp.fromAge));
+                            const updated = [...breakPeriods];
+                            updated[index] = { ...updated[index], toAge: to };
+                            setBreakPeriods(updated);
+                          }}
+                          className="w-14 text-sm font-bold text-center border border-amber-300 rounded px-1 py-1"
+                        />
+                        <span className="text-xs text-gray-700">(no contributions)</span>
+                        <button
+                          type="button"
+                          onClick={() => setBreakPeriods(breakPeriods.filter((_, i) => i !== index))}
+                          className="text-amber-700 hover:text-red-600 text-xs font-bold px-2 py-0.5"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => setBreakPeriods([...breakPeriods, { fromAge: startAge + 5, toAge: startAge + 7 }])}
+                      className="w-full text-xs text-amber-700 hover:text-amber-800 font-medium py-2 border border-amber-300 rounded-lg hover:bg-amber-50 transition-colors"
+                    >
+                      + Add a break period
+                    </button>
+                  </div>
+                )}
+              </div>
+
               {/* Collapsible Advanced Contribution Schedule */}
-              <div className="mt-4 pt-4 border-t border-blue-200">
+              <div className="mt-2 pt-2 border-t border-blue-200">
                 <button
                   onClick={handleToggleAdvancedContributions}
                   className="w-full flex items-center justify-between text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors"
@@ -519,7 +630,7 @@ const FamilyWealthBlueprint: React.FC = () => {
                 {showAdvancedContributions && (
                   <div className="mt-4 space-y-3 animate-in slide-in-from-top-2 duration-200">
                     <p className="text-xs text-gray-600 mb-3">
-                      <strong>Optional:</strong> Set different contribution amounts at different ages. For example, you might contribute $200 a month now, and increase it to $500 a month when you get a raise or pay off debt.
+                      <strong>Optional:</strong> Set a different total monthly amount (super + personal) at specific ages. E.g. $200 now, $500 after a raise. Breaks still apply on top of this.
                     </p>
                     {contributionSchedule.map((entry, index) => (
                       <div key={index} className="bg-blue-50 rounded-lg p-3 relative">
@@ -530,6 +641,7 @@ const FamilyWealthBlueprint: React.FC = () => {
                             </label>
                             <input
                               type="text"
+                              inputMode="numeric"
                               tabIndex={index * 2 + 1}
                               value={entry.age}
                               onChange={(e) => {
@@ -540,12 +652,17 @@ const FamilyWealthBlueprint: React.FC = () => {
                                   setContributionSchedule(updated);
                                 } else {
                                   const age = Number(numericValue);
-                                  if (!isNaN(age)) {
+                                  if (!isNaN(age) && age >= 0 && age <= 120) {
                                     const updated = [...contributionSchedule];
                                     updated[index] = { ...updated[index], age: age };
                                     setContributionSchedule(updated);
                                   }
                                 }
+                              }}
+                              onFocus={(e) => {
+                                setTimeout(() => {
+                                  e.target.select();
+                                }, 0);
                               }}
                               onBlur={(e) => {
                                 // Calculate min age: startAge for first entry, previous entry's age for others
@@ -585,6 +702,7 @@ const FamilyWealthBlueprint: React.FC = () => {
                             </label>
                             <input
                               type="text"
+                              inputMode="numeric"
                               tabIndex={index * 2 + 2}
                               value={focusedContributionIndex === index 
                                 ? entry.amount.toString() 
@@ -616,8 +734,11 @@ const FamilyWealthBlueprint: React.FC = () => {
                                 }
                                 setFocusedContributionIndex(null);
                               }}
-                              onFocus={() => {
+                              onFocus={(e) => {
                                 setFocusedContributionIndex(index);
+                                setTimeout(() => {
+                                  e.target.select();
+                                }, 0);
                               }}
                               onKeyDown={(e) => {
                                 if (e.key === 'Enter' || e.key === 'Tab') {
@@ -693,17 +814,27 @@ const FamilyWealthBlueprint: React.FC = () => {
                 <span className="text-sm text-gray-500 flex-shrink-0 w-4"></span>
                 <input
                   type="text"
+                  inputMode="decimal"
                   value={annualReturn}
                   onChange={(e) => {
-                    const numericValue = e.target.value.replace(/[^0-9.]/g, '');
-                    if (numericValue === '') {
+                    let numericValue = e.target.value.replace(/[^0-9.]/g, '');
+                    const parts = numericValue.split('.');
+                    if (parts.length > 2) {
+                      numericValue = parts[0] + '.' + parts.slice(1).join('');
+                    }
+                    if (numericValue === '' || numericValue === '.') {
                       setAnnualReturn(5);
                     } else {
                       const num = Number(numericValue);
-                      if (!isNaN(num)) {
+                      if (!isNaN(num) && num >= 0) {
                         setAnnualReturn(num);
                       }
                     }
+                  }}
+                  onFocus={(e) => {
+                    setTimeout(() => {
+                      e.target.select();
+                    }, 0);
                   }}
                   onBlur={(e) => {
                     const num = Math.max(5, Math.min(20, Number(e.target.value) || 5));
@@ -745,6 +876,7 @@ const FamilyWealthBlueprint: React.FC = () => {
                 <span className="text-sm text-gray-500 flex-shrink-0 w-4"></span>
                 <input
                   type="text"
+                  inputMode="numeric"
                   value={targetAge}
                   onChange={(e) => {
                     const numericValue = e.target.value.replace(/[^0-9]/g, '');
@@ -752,10 +884,15 @@ const FamilyWealthBlueprint: React.FC = () => {
                       setTargetAge(startAge + 1);
                     } else {
                       const age = Number(numericValue);
-                      if (!isNaN(age) && age > startAge) {
+                      if (!isNaN(age) && age >= 0 && age <= 120) {
                         setTargetAge(age);
                       }
                     }
+                  }}
+                  onFocus={(e) => {
+                    setTimeout(() => {
+                      e.target.select();
+                    }, 0);
                   }}
                   onBlur={(e) => {
                     const age = Number(e.target.value) || (startAge + 1);
@@ -1047,7 +1184,14 @@ const FamilyWealthBlueprint: React.FC = () => {
 
           <div className="bg-yellow-50 border-2 border-yellow-300 rounded-2xl p-4 sm:p-6 text-center">
             <p className="text-lg sm:text-2xl font-bold text-gray-800 mb-2">
-              🎉 Starting at age <span className="text-purple-600">{startAge}</span> with <span className="text-blue-600">${monthlyAmount}/month</span>
+              🎉 Starting at age <span className="text-purple-600">{startAge}</span> with{' '}
+              <span className="text-blue-600">${monthlySuper}/mo super</span>
+              {monthlyPersonal > 0 && (
+                <>
+                  {' '}+ <span className="text-indigo-600">${monthlyPersonal}/mo personal</span>
+                </>
+              )}
+              {' '}(<span className="text-gray-700">${monthlyAmount}/month total</span>)
             </p>
             <p className="text-base sm:text-xl text-gray-700">
               By age <span className="text-orange-600 font-bold">{targetAge}</span>, you could have{' '}
@@ -1088,7 +1232,7 @@ const FamilyWealthBlueprint: React.FC = () => {
             </div>
             <div className="text-2xl font-bold text-blue-600 mb-2">Step 2</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">
-              Start With a Low-Cost Index Fund
+              Start with a low-cost ETF that tracks a broad market index
             </h3>
             <p className="text-gray-700 leading-relaxed">
               Forget stock-picking. Buy the whole market through one low-cost index fund 
