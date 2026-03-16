@@ -16,15 +16,17 @@ const Icon = ({ emoji, className = '' }: { emoji: string; className?: string }) 
   <span className={`text-4xl ${className}`}>{emoji}</span>
 );
 
-// Compounding calculator with optional age-based contribution schedule and break periods
+// Compounding calculator with optional age-based contribution schedule (super + personal) and separate break periods
 const calculateCompound = (
   startAge: number,
-  monthlyAmount: number,
+  monthlySuper: number,
+  monthlyPersonal: number,
   years: number,
   annualReturn: number,
   initialInvestment: number = 0,
-  contributionSchedule?: Array<{ age: number; amount: number }>,
-  breakPeriods?: Array<{ fromAge: number; toAge: number }>
+  contributionSchedule?: Array<{ age: number; amountSuper: number; amountPersonal: number }>,
+  breakPeriodsSuper?: Array<{ fromAge: number; toAge: number }>,
+  breakPeriodsPersonal?: Array<{ fromAge: number; toAge: number }>
 ): Array<{ age: number; total: number; contributed: number; growth: number }> => {
   const data = [];
   let balance = initialInvestment;
@@ -32,28 +34,39 @@ const calculateCompound = (
   const monthlyReturn = annualReturn / 100 / 12;
   const totalMonths = years * 12;
 
-  const isInBreak = (age: number): boolean => {
-    if (!breakPeriods || breakPeriods.length === 0) return false;
-    return breakPeriods.some((b) => age >= b.fromAge && age <= b.toAge);
+  const isInBreakSuper = (age: number): boolean => {
+    if (!breakPeriodsSuper?.length) return false;
+    return breakPeriodsSuper.some((b) => age >= b.fromAge && age <= b.toAge);
+  };
+  const isInBreakPersonal = (age: number): boolean => {
+    if (!breakPeriodsPersonal?.length) return false;
+    return breakPeriodsPersonal.some((b) => age >= b.fromAge && age <= b.toAge);
   };
 
-  const getMonthlyAmountAtAge = (age: number): number => {
-    if (isInBreak(age)) return 0;
-    if (!contributionSchedule || contributionSchedule.length === 0) {
-      return monthlyAmount;
-    }
+  const getSuperAtAge = (age: number): number => {
+    if (isInBreakSuper(age)) return 0;
+    if (!contributionSchedule?.length) return monthlySuper;
     const sorted = [...contributionSchedule].sort((a, b) => b.age - a.age);
     for (const entry of sorted) {
-      if (age >= entry.age) {
-        return entry.amount;
-      }
+      if (age >= entry.age) return entry.amountSuper;
     }
-    return monthlyAmount;
+    return monthlySuper;
+  };
+  const getPersonalAtAge = (age: number): number => {
+    if (isInBreakPersonal(age)) return 0;
+    if (!contributionSchedule?.length) return monthlyPersonal;
+    const sorted = [...contributionSchedule].sort((a, b) => b.age - a.age);
+    for (const entry of sorted) {
+      if (age >= entry.age) return entry.amountPersonal;
+    }
+    return monthlyPersonal;
   };
 
   for (let month = 0; month <= totalMonths; month++) {
     const currentAge = startAge + month / 12;
-    const currentMonthlyAmount = getMonthlyAmountAtAge(currentAge);
+    const superAmount = getSuperAtAge(currentAge);
+    const personalAmount = getPersonalAtAge(currentAge);
+    const currentMonthlyAmount = superAmount + personalAmount;
 
     if (month > 0) {
       balance = balance * (1 + monthlyReturn) + currentMonthlyAmount;
@@ -98,14 +111,15 @@ const FamilyWealthBlueprint: React.FC = () => {
   const [monthlyPersonalFocused, setMonthlyPersonalFocused] = useState(false);
   const [initialInvestmentFocused, setInitialInvestmentFocused] = useState(false);
 
-  // Advanced contribution schedule (collapsible)
+  // Advanced contribution schedule: super + personal per age (collapsible)
   const [showAdvancedContributions, setShowAdvancedContributions] = useState(false);
-  const [contributionSchedule, setContributionSchedule] = useState<Array<{ age: number; amount: number }>>([]);
+  const [contributionSchedule, setContributionSchedule] = useState<Array<{ age: number; amountSuper: number; amountPersonal: number }>>([]);
   const [focusedContributionIndex, setFocusedContributionIndex] = useState<number | null>(null);
 
-  // Take a break (pause contributing for a period)
+  // Take a break: separate pause periods for super and personal
   const [showTakeABreak, setShowTakeABreak] = useState(false);
-  const [breakPeriods, setBreakPeriods] = useState<Array<{ fromAge: number; toAge: number }>>([]);
+  const [breakPeriodsSuper, setBreakPeriodsSuper] = useState<Array<{ fromAge: number; toAge: number }>>([]);
+  const [breakPeriodsPersonal, setBreakPeriodsPersonal] = useState<Array<{ fromAge: number; toAge: number }>>([]);
   
   // Educational section (collapsible)
   const [showEducationalSection, setShowEducationalSection] = useState(false);
@@ -129,9 +143,10 @@ const FamilyWealthBlueprint: React.FC = () => {
     const schedule = showAdvancedContributions && contributionSchedule.length > 0
       ? contributionSchedule
       : undefined;
-    const breaks = showTakeABreak && breakPeriods.length > 0 ? breakPeriods : undefined;
-    return calculateCompound(startAge, monthlyAmount, years, annualReturn, initialInvestment, schedule, breaks);
-  }, [startAge, monthlyAmount, annualReturn, targetAge, initialInvestment, showAdvancedContributions, contributionSchedule, showTakeABreak, breakPeriods]);
+    const breaksSuper = showTakeABreak && breakPeriodsSuper.length > 0 ? breakPeriodsSuper : undefined;
+    const breaksPersonal = showTakeABreak && breakPeriodsPersonal.length > 0 ? breakPeriodsPersonal : undefined;
+    return calculateCompound(startAge, monthlySuper, monthlyPersonal, years, annualReturn, initialInvestment, schedule, breaksSuper, breaksPersonal);
+  }, [startAge, monthlySuper, monthlyPersonal, annualReturn, targetAge, initialInvestment, showAdvancedContributions, contributionSchedule, showTakeABreak, breakPeriodsSuper, breakPeriodsPersonal]);
 
   const finalAmount = chartData[chartData.length - 1]?.total || 0;
   const totalContributed = chartData[chartData.length - 1]?.contributed || 0;
@@ -540,7 +555,10 @@ const FamilyWealthBlueprint: React.FC = () => {
               <div className="mb-4 pb-4 border-b border-blue-200">
                 <button
                   onClick={() => {
-                    if (!showTakeABreak) setBreakPeriods([]);
+                    if (!showTakeABreak) {
+                      setBreakPeriodsSuper([]);
+                      setBreakPeriodsPersonal([]);
+                    }
                     setShowTakeABreak(!showTakeABreak);
                   }}
                   className="w-full flex items-center justify-between text-sm text-amber-700 hover:text-amber-800 font-medium transition-colors"
@@ -554,60 +572,96 @@ const FamilyWealthBlueprint: React.FC = () => {
                   </span>
                 </button>
                 {showTakeABreak && (
-                  <div className="mt-3 space-y-3 animate-in slide-in-from-top-2 duration-200">
+                  <div className="mt-3 space-y-4 animate-in slide-in-from-top-2 duration-200">
                     <p className="text-xs text-gray-600">
-                      Pause contributions for a period (e.g. use the money for something else). Your balance still grows from returns; you just don’t add new money during the break.
+                      Pause super and/or personal contributions for a period. Your balance still grows from returns; you just don’t add new money during the break.
                     </p>
-                    {breakPeriods.map((bp, index) => (
-                      <div key={index} className="bg-amber-50 rounded-lg p-3 relative flex flex-wrap items-center gap-2">
-                        <span className="text-xs text-gray-700">From age</span>
-                        <input
-                          type="number"
-                          min={startAge}
-                          max={targetAge - 1}
-                          value={bp.fromAge}
-                          aria-label={`Break ${index + 1} start age`}
-                          onChange={(e) => {
-                            const from = Math.max(startAge, Math.min(targetAge - 1, Number(e.target.value) || startAge));
-                            const updated = [...breakPeriods];
-                            updated[index] = { ...updated[index], fromAge: from };
-                            if (updated[index].toAge < from) updated[index].toAge = from;
-                            setBreakPeriods(updated);
-                          }}
-                          className="w-14 text-sm font-bold text-center border border-amber-300 rounded px-1 py-1"
-                        />
-                        <span className="text-xs text-gray-700">to</span>
-                        <input
-                          type="number"
-                          min={bp.fromAge}
-                          max={targetAge}
-                          value={bp.toAge}
-                          aria-label={`Break ${index + 1} end age`}
-                          onChange={(e) => {
-                            const to = Math.max(bp.fromAge, Math.min(targetAge, Number(e.target.value) || bp.fromAge));
-                            const updated = [...breakPeriods];
-                            updated[index] = { ...updated[index], toAge: to };
-                            setBreakPeriods(updated);
-                          }}
-                          className="w-14 text-sm font-bold text-center border border-amber-300 rounded px-1 py-1"
-                        />
-                        <span className="text-xs text-gray-700">(no contributions)</span>
-                        <button
-                          type="button"
-                          onClick={() => setBreakPeriods(breakPeriods.filter((_, i) => i !== index))}
-                          className="text-amber-700 hover:text-red-600 text-xs font-bold px-2 py-0.5"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={() => setBreakPeriods([...breakPeriods, { fromAge: startAge + 5, toAge: startAge + 7 }])}
-                      className="w-full text-xs text-amber-700 hover:text-amber-800 font-medium py-2 border border-amber-300 rounded-lg hover:bg-amber-50 transition-colors"
-                    >
-                      + Add a break period
-                    </button>
+                    {/* Pause Super */}
+                    <div>
+                      <div className="text-xs font-semibold text-blue-700 mb-2">Pause super</div>
+                      {breakPeriodsSuper.map((bp, index) => (
+                        <div key={`s-${index}`} className="bg-blue-50/80 rounded-lg p-3 relative flex flex-wrap items-center gap-2 mb-2">
+                          <span className="text-xs text-gray-700">From age</span>
+                          <input
+                            type="number"
+                            min={startAge}
+                            max={targetAge - 1}
+                            value={bp.fromAge}
+                            aria-label={`Super break ${index + 1} start age`}
+                            onChange={(e) => {
+                              const from = Math.max(startAge, Math.min(targetAge - 1, Number(e.target.value) || startAge));
+                              const updated = [...breakPeriodsSuper];
+                              updated[index] = { ...updated[index], fromAge: from };
+                              if (updated[index].toAge < from) updated[index].toAge = from;
+                              setBreakPeriodsSuper(updated);
+                            }}
+                            className="w-14 text-sm font-bold text-center border border-blue-300 rounded px-1 py-1"
+                          />
+                          <span className="text-xs text-gray-700">to</span>
+                          <input
+                            type="number"
+                            min={bp.fromAge}
+                            max={targetAge}
+                            value={bp.toAge}
+                            aria-label={`Super break ${index + 1} end age`}
+                            onChange={(e) => {
+                              const to = Math.max(bp.fromAge, Math.min(targetAge, Number(e.target.value) || bp.fromAge));
+                              const updated = [...breakPeriodsSuper];
+                              updated[index] = { ...updated[index], toAge: to };
+                              setBreakPeriodsSuper(updated);
+                            }}
+                            className="w-14 text-sm font-bold text-center border border-blue-300 rounded px-1 py-1"
+                          />
+                          <button type="button" onClick={() => setBreakPeriodsSuper(breakPeriodsSuper.filter((_, i) => i !== index))} className="text-blue-600 hover:text-red-600 text-xs font-bold px-2 py-0.5">Remove</button>
+                        </div>
+                      ))}
+                      <button type="button" onClick={() => setBreakPeriodsSuper([...breakPeriodsSuper, { fromAge: startAge + 5, toAge: startAge + 7 }])} className="w-full text-xs text-blue-700 hover:text-blue-800 font-medium py-1.5 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors">
+                        + Add super break
+                      </button>
+                    </div>
+                    {/* Pause Personal */}
+                    <div>
+                      <div className="text-xs font-semibold text-indigo-700 mb-2">Pause personal</div>
+                      {breakPeriodsPersonal.map((bp, index) => (
+                        <div key={`p-${index}`} className="bg-indigo-50/80 rounded-lg p-3 relative flex flex-wrap items-center gap-2 mb-2">
+                          <span className="text-xs text-gray-700">From age</span>
+                          <input
+                            type="number"
+                            min={startAge}
+                            max={targetAge - 1}
+                            value={bp.fromAge}
+                            aria-label={`Personal break ${index + 1} start age`}
+                            onChange={(e) => {
+                              const from = Math.max(startAge, Math.min(targetAge - 1, Number(e.target.value) || startAge));
+                              const updated = [...breakPeriodsPersonal];
+                              updated[index] = { ...updated[index], fromAge: from };
+                              if (updated[index].toAge < from) updated[index].toAge = from;
+                              setBreakPeriodsPersonal(updated);
+                            }}
+                            className="w-14 text-sm font-bold text-center border border-indigo-300 rounded px-1 py-1"
+                          />
+                          <span className="text-xs text-gray-700">to</span>
+                          <input
+                            type="number"
+                            min={bp.fromAge}
+                            max={targetAge}
+                            value={bp.toAge}
+                            aria-label={`Personal break ${index + 1} end age`}
+                            onChange={(e) => {
+                              const to = Math.max(bp.fromAge, Math.min(targetAge, Number(e.target.value) || bp.fromAge));
+                              const updated = [...breakPeriodsPersonal];
+                              updated[index] = { ...updated[index], toAge: to };
+                              setBreakPeriodsPersonal(updated);
+                            }}
+                            className="w-14 text-sm font-bold text-center border border-indigo-300 rounded px-1 py-1"
+                          />
+                          <button type="button" onClick={() => setBreakPeriodsPersonal(breakPeriodsPersonal.filter((_, i) => i !== index))} className="text-indigo-600 hover:text-red-600 text-xs font-bold px-2 py-0.5">Remove</button>
+                        </div>
+                      ))}
+                      <button type="button" onClick={() => setBreakPeriodsPersonal([...breakPeriodsPersonal, { fromAge: startAge + 5, toAge: startAge + 7 }])} className="w-full text-xs text-indigo-700 hover:text-indigo-800 font-medium py-1.5 border border-indigo-300 rounded-lg hover:bg-indigo-50 transition-colors">
+                        + Add personal break
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -630,19 +684,17 @@ const FamilyWealthBlueprint: React.FC = () => {
                 {showAdvancedContributions && (
                   <div className="mt-4 space-y-3 animate-in slide-in-from-top-2 duration-200">
                     <p className="text-xs text-gray-600 mb-3">
-                      <strong>Optional:</strong> Set a different total monthly amount (super + personal) at specific ages. E.g. $200 now, $500 after a raise. Breaks still apply on top of this.
+                      <strong>Optional:</strong> Set different super and personal amounts at specific ages. E.g. more super after a raise, less personal while paying off debt. Breaks still apply.
                     </p>
                     {contributionSchedule.map((entry, index) => (
                       <div key={index} className="bg-blue-50 rounded-lg p-3 relative">
                         <div className="space-y-2">
                           <div>
-                            <label className="block text-xs text-gray-700 font-medium mb-1">
-                              At age:
-                            </label>
+                            <label className="block text-xs text-gray-700 font-medium mb-1">At age:</label>
                             <input
                               type="text"
                               inputMode="numeric"
-                              tabIndex={index * 2 + 1}
+                              tabIndex={index * 3 + 1}
                               value={entry.age}
                               onChange={(e) => {
                                 const numericValue = e.target.value.replace(/[^0-9]/g, '');
@@ -654,117 +706,99 @@ const FamilyWealthBlueprint: React.FC = () => {
                                   const age = Number(numericValue);
                                   if (!isNaN(age) && age >= 0 && age <= 120) {
                                     const updated = [...contributionSchedule];
-                                    updated[index] = { ...updated[index], age: age };
+                                    updated[index] = { ...updated[index], age };
                                     setContributionSchedule(updated);
                                   }
                                 }
                               }}
-                              onFocus={(e) => {
-                                setTimeout(() => {
-                                  e.target.select();
-                                }, 0);
-                              }}
+                              onFocus={(e) => setTimeout(() => e.target.select(), 0)}
                               onBlur={(e) => {
-                                // Calculate min age: startAge for first entry, previous entry's age for others
-                                const minAge = index === 0 
-                                  ? startAge 
-                                  : Math.max(startAge, contributionSchedule[index - 1].age);
-                                
-                                // Calculate max age: next entry's age (if exists), or targetAge
-                                const maxAge = index < contributionSchedule.length - 1
-                                  ? contributionSchedule[index + 1].age
-                                  : targetAge;
-                                
+                                const minAge = index === 0 ? startAge : Math.max(startAge, contributionSchedule[index - 1].age);
+                                const maxAge = index < contributionSchedule.length - 1 ? contributionSchedule[index + 1].age : targetAge;
                                 const newAge = Math.max(minAge, Math.min(maxAge, Number(e.target.value) || minAge));
                                 const updated = [...contributionSchedule];
                                 updated[index] = { ...updated[index], age: newAge };
                                 setContributionSchedule(updated);
                               }}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === 'Tab') {
-                                  e.preventDefault();
-                                  e.currentTarget.blur();
-                                  // Move to amount input of same entry
-                                  const nextInput = document.querySelector(
-                                    `input[tabindex="${index * 2 + 2}"]`
-                                  ) as HTMLInputElement;
-                                  if (nextInput) {
-                                    setTimeout(() => nextInput.focus(), 0);
-                                  }
-                                }
-                              }}
-                              className="w-full text-sm font-bold text-blue-600 text-center border border-blue-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full text-sm font-bold text-gray-800 text-center border border-blue-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                           </div>
-                          <div>
-                            <label className="block text-xs text-gray-700 font-medium mb-1">
-                              Amount: $
-                            </label>
-                            <input
-                              type="text"
-                              inputMode="numeric"
-                              tabIndex={index * 2 + 2}
-                              value={focusedContributionIndex === index 
-                                ? entry.amount.toString() 
-                                : (entry.amount >= 1000 ? entry.amount.toLocaleString() : entry.amount.toString())
-                              }
-                              onChange={(e) => {
-                                // Remove all non-numeric characters
-                                const numericValue = e.target.value.replace(/[^0-9]/g, '');
-                                if (numericValue === '') {
-                                  const updated = [...contributionSchedule];
-                                  updated[index] = { ...updated[index], amount: 0 };
-                                  setContributionSchedule(updated);
-                                } else {
-                                  const num = Number(numericValue);
-                                  if (!isNaN(num) && num >= 0) {
+                          <div className="grid grid-cols-2 gap-2">
+                            <div>
+                              <label className="block text-xs text-gray-700 font-medium mb-1">Super $</label>
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                tabIndex={index * 3 + 2}
+                                value={focusedContributionIndex === index ? entry.amountSuper.toString() : (entry.amountSuper >= 1000 ? entry.amountSuper.toLocaleString() : entry.amountSuper.toString())}
+                                onChange={(e) => {
+                                  const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                                  if (numericValue === '') {
                                     const updated = [...contributionSchedule];
-                                    updated[index] = { ...updated[index], amount: num };
+                                    updated[index] = { ...updated[index], amountSuper: 0 };
                                     setContributionSchedule(updated);
-                                  }
-                                }
-                              }}
-                              onBlur={() => {
-                                // Clamp to valid range on blur (minimum 0, no maximum)
-                                const newAmount = Math.max(0, entry.amount);
-                                if (newAmount !== entry.amount) {
-                                  const updated = [...contributionSchedule];
-                                  updated[index] = { ...updated[index], amount: newAmount };
-                                  setContributionSchedule(updated);
-                                }
-                                setFocusedContributionIndex(null);
-                              }}
-                              onFocus={(e) => {
-                                setFocusedContributionIndex(index);
-                                setTimeout(() => {
-                                  e.target.select();
-                                }, 0);
-                              }}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === 'Tab') {
-                                  e.preventDefault();
-                                  e.currentTarget.blur();
-                                  // Move to next field: age input of next entry, or stay if last entry
-                                  if (index < contributionSchedule.length - 1) {
-                                    const nextInput = document.querySelector(
-                                      `input[tabindex="${(index + 1) * 2 + 1}"]`
-                                    ) as HTMLInputElement;
-                                    if (nextInput) {
-                                      setTimeout(() => nextInput.focus(), 0);
+                                  } else {
+                                    const num = Number(numericValue);
+                                    if (!isNaN(num) && num >= 0) {
+                                      const updated = [...contributionSchedule];
+                                      updated[index] = { ...updated[index], amountSuper: num };
+                                      setContributionSchedule(updated);
                                     }
                                   }
-                                }
-                              }}
-                              className="w-full text-base font-bold text-blue-600 text-center border border-blue-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
+                                }}
+                                onBlur={() => {
+                                  const newAmount = Math.max(0, entry.amountSuper);
+                                  if (newAmount !== entry.amountSuper) {
+                                    const updated = [...contributionSchedule];
+                                    updated[index] = { ...updated[index], amountSuper: newAmount };
+                                    setContributionSchedule(updated);
+                                  }
+                                  setFocusedContributionIndex(null);
+                                }}
+                                onFocus={(e) => { setFocusedContributionIndex(index); setTimeout(() => e.target.select(), 0); }}
+                                className="w-full text-sm font-bold text-blue-600 text-center border border-blue-300 rounded px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              />
+                            </div>
+                            <div>
+                              <label className="block text-xs text-gray-700 font-medium mb-1">Personal $</label>
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                tabIndex={index * 3 + 3}
+                                value={focusedContributionIndex === index ? entry.amountPersonal.toString() : (entry.amountPersonal >= 1000 ? entry.amountPersonal.toLocaleString() : entry.amountPersonal.toString())}
+                                onChange={(e) => {
+                                  const numericValue = e.target.value.replace(/[^0-9]/g, '');
+                                  if (numericValue === '') {
+                                    const updated = [...contributionSchedule];
+                                    updated[index] = { ...updated[index], amountPersonal: 0 };
+                                    setContributionSchedule(updated);
+                                  } else {
+                                    const num = Number(numericValue);
+                                    if (!isNaN(num) && num >= 0) {
+                                      const updated = [...contributionSchedule];
+                                      updated[index] = { ...updated[index], amountPersonal: num };
+                                      setContributionSchedule(updated);
+                                    }
+                                  }
+                                }}
+                                onBlur={() => {
+                                  const newAmount = Math.max(0, entry.amountPersonal);
+                                  if (newAmount !== entry.amountPersonal) {
+                                    const updated = [...contributionSchedule];
+                                    updated[index] = { ...updated[index], amountPersonal: newAmount };
+                                    setContributionSchedule(updated);
+                                  }
+                                  setFocusedContributionIndex(null);
+                                }}
+                                onFocus={(e) => { setFocusedContributionIndex(index); setTimeout(() => e.target.select(), 0); }}
+                                className="w-full text-sm font-bold text-indigo-600 text-center border border-indigo-300 rounded px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                              />
+                            </div>
                           </div>
                         </div>
                         {contributionSchedule.length > 1 && (
                           <button
-                            onClick={() => {
-                              const updated = contributionSchedule.filter((_, i) => i !== index);
-                              setContributionSchedule(updated);
-                            }}
+                            onClick={() => setContributionSchedule(contributionSchedule.filter((_, i) => i !== index))}
                             className="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xs font-bold px-2 py-1"
                           >
                             ✕
@@ -774,12 +808,10 @@ const FamilyWealthBlueprint: React.FC = () => {
                     ))}
                     <button
                       onClick={() => {
-                        const lastAge = contributionSchedule.length > 0 
-                          ? Math.max(...contributionSchedule.map(e => e.age)) + 1
-                          : startAge + 1;
+                        const lastAge = contributionSchedule.length > 0 ? Math.max(...contributionSchedule.map(e => e.age)) + 1 : startAge + 1;
                         setContributionSchedule([
                           ...contributionSchedule,
-                          { age: Math.min(lastAge, targetAge), amount: monthlyAmount }
+                          { age: Math.min(lastAge, targetAge), amountSuper: monthlySuper, amountPersonal: monthlyPersonal }
                         ]);
                       }}
                       className="w-full text-xs text-blue-600 hover:text-blue-700 font-medium py-2 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
@@ -981,11 +1013,11 @@ const FamilyWealthBlueprint: React.FC = () => {
                             const growth = yearlyInvestment * annualReturn / 100;
                             
                             // Calculate 20-year projection
-                            const data20Years = calculateCompound(0, monthlyAmount, 20, annualReturn, 0);
+                            const data20Years = calculateCompound(0, monthlySuper, monthlyPersonal, 20, annualReturn, 0);
                             const after20Years = data20Years[data20Years.length - 1]?.total || 0;
                             
                             // Calculate 30-year projection
-                            const data30Years = calculateCompound(0, monthlyAmount, 30, annualReturn, 0);
+                            const data30Years = calculateCompound(0, monthlySuper, monthlyPersonal, 30, annualReturn, 0);
                             const after30Years = data30Years[data30Years.length - 1]?.total || 0;
                             
                             return (
