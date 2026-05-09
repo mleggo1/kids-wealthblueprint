@@ -11,6 +11,11 @@ import {
   ReferenceLine,
 } from 'recharts';
 
+/** Tweens & early teens — slider defaults; text field can go slightly outside for demos. */
+const KID_AGE_MIN = 8;
+const KID_AGE_MAX = 15;
+const KID_TARGET_AGE_MAX = 40;
+
 // Simple icon components (can be replaced with actual SVGs later)
 const Icon = ({ emoji, className = '' }: { emoji: string; className?: string }) => (
   <span className={`text-4xl ${className}`}>{emoji}</span>
@@ -80,13 +85,19 @@ const KidsWealthBlueprint: React.FC = () => {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-  
+
   // Interactive chart state
-  const [startAge, setStartAge] = useState(0);
+  const [startAge, setStartAge] = useState(11);
   const [initialInvestment, setInitialInvestment] = useState(0);
-  const [monthlyAmount, setMonthlyAmount] = useState(100);
+  const [monthlyAmount, setMonthlyAmount] = useState(50);
   const [annualReturn, setAnnualReturn] = useState(8.0);
-  const [targetAge, setTargetAge] = useState(28);
+  const [targetAge, setTargetAge] = useState(22);
+
+  const startAgeSliderMax = Math.min(KID_AGE_MAX, Math.max(KID_AGE_MIN, targetAge - 1));
+  useEffect(() => {
+    const max = Math.min(KID_AGE_MAX, Math.max(KID_AGE_MIN, targetAge - 1));
+    setStartAge((a) => Math.max(KID_AGE_MIN, Math.min(max, a)));
+  }, [targetAge]);
   const [monthlyInputFocused, setMonthlyInputFocused] = useState(false);
   const [initialInvestmentFocused, setInitialInvestmentFocused] = useState(false);
   
@@ -242,29 +253,37 @@ const KidsWealthBlueprint: React.FC = () => {
       </div>
       
       <div className="relative z-10">
-      {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-6 text-center">
-        {/* Visually Stunning Title */}
+      {/* Hero Section — written for ages ~8–15 */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6 text-center">
+        <div className="mb-4">
+          <span className="inline-block rounded-full bg-fuchsia-100 text-fuchsia-800 text-xs sm:text-sm font-bold px-3 py-1 border border-fuchsia-200">
+            For kids about 8–15 · grown-ups welcome too
+          </span>
+        </div>
         <div className="mb-6">
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-2">
-            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-2 leading-tight">
+            <span className="bg-gradient-to-r from-fuchsia-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
               Kids Wealth Blueprint
             </span>
           </h1>
-          <div className="h-1 w-32 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 mx-auto rounded-full"></div>
+          <div className="h-1 w-32 bg-gradient-to-r from-fuchsia-500 via-purple-500 to-indigo-500 mx-auto rounded-full"></div>
         </div>
-        
-        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-          Set Your Kids Up For Life
+
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 max-w-2xl mx-auto">
+          Level up your future money — starting right now
         </h2>
-        <p className="text-lg sm:text-xl text-gray-700 mb-6 max-w-3xl mx-auto">
-          A simple blueprint any parent can use to help set your kids up.
+        <p className="text-base sm:text-lg text-gray-700 mb-2 max-w-2xl mx-auto leading-relaxed">
+          Ever wonder how pocket money, birthday cash, or a small amount saved each month could grow over time?
+          This page is your cheat code: play with the sliders, watch the graph, and see why <strong>starting early</strong> is a superpower.
+        </p>
+        <p className="text-sm text-gray-600 mb-6 max-w-xl mx-auto">
+          Big-money accounts need a trusted adult — but <em>you</em> can still learn how it all works.
         </p>
         <a
           href="#watch-money-grow"
-          className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg text-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 ripple-effect"
+          className="inline-block bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-semibold py-3 px-8 rounded-xl text-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 ripple-effect"
         >
-          Start Their Wealth Blueprint
+          See the money grow
         </a>
       </section>
 
@@ -272,7 +291,7 @@ const KidsWealthBlueprint: React.FC = () => {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg border border-gray-100 card-interactive">
           <div className="flex items-center justify-between gap-2 mb-3">
-            <h2 className="text-xl font-bold text-gray-900">Kids Wealth Blueprint — Why This Matters</h2>
+            <h2 className="text-xl font-bold text-gray-900">Why this is cool (for you)</h2>
             <button
               onClick={() => setShowWhyThisMatters(!showWhyThisMatters)}
               className="flex-shrink-0 text-gray-700 hover:text-gray-800 font-medium text-sm px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-1"
@@ -286,41 +305,35 @@ const KidsWealthBlueprint: React.FC = () => {
           </div>
           
           {showWhyThisMatters && (
-            <div className="max-w-4xl mx-auto space-y-2 text-base text-gray-700 leading-relaxed animate-in slide-in-from-top-2 duration-200">
+            <div className="max-w-4xl mx-auto space-y-3 text-base text-gray-700 leading-relaxed animate-in slide-in-from-top-2 duration-200">
               <p>
-                Give your kids the gift most adults wish they had — a clear, confident start with money. Show them the magic of starting early, so they grow up empowered instead of stressed or wishing someone had taught them sooner.
+                Most grown-ups say they wish someone had shown them this stuff earlier. You&apos;re getting a head start: 
+                how saving a little, often, can team up with time to do something amazing.
               </p>
-              
+
               <p className="text-lg font-semibold text-gray-900">
-                This blueprint gives your kids a better path.
+                You don&apos;t need to be a math genius — just curious.
               </p>
-              
+
               <p>
-                It's simple, long-term, and doesn't rely on picking winning stocks. It teaches the real secret:
+                The big idea is simple. No picking &quot;hot&quot; stocks on your phone. Instead, think:
               </p>
-              
-              <ul className="space-y-0.5 list-disc list-inside ml-4 text-base">
-                <li>start early</li>
-                <li>stay consistent</li>
-                <li>let compounding do the work</li>
+
+              <ul className="space-y-1 list-disc list-inside ml-4 text-base">
+                <li><strong>Start early</strong> — even small amounts count</li>
+                <li><strong>Keep going</strong> — like leveling up a character, but with dollars</li>
+                <li><strong>Let time work</strong> — that&apos;s compounding (the chart shows it)</li>
               </ul>
-              
+
               <p>
-                Kids who learn this young grow up confident, in control, and ahead of everyone else. 
-                Money becomes something they understand — not something they fear.
+                Learning this now means money feels less scary later — whether you&apos;re saving for a console, 
+                a trip, study, or something way down the road. It&apos;s about <em>options</em>, not stress.
               </p>
-              
-              <p>
-                This money could be used for their first car, their first home, starting a business, 
-                traveling the world, or simply having the freedom to make choices without financial stress. 
-                It helps set them up for life — giving them options, security, and the confidence to 
-                pursue their dreams. That's a really positive thing.
-              </p>
-              
-              <div className="bg-blue-50 rounded-xl p-3 border-l-4 border-blue-600 mt-2">
-                <p className="text-lg font-semibold text-gray-900 mb-0.5">And the best part?</p>
+
+              <div className="bg-fuchsia-50 rounded-xl p-3 border-l-4 border-fuchsia-600 mt-2">
+                <p className="text-lg font-semibold text-gray-900 mb-0.5">For the adults in the room</p>
                 <p className="text-base text-gray-800">
-                  It's easy enough for your kids to follow… yet powerful enough to shape their entire financial future.
+                  Use this page together: you handle accounts and products; they build confidence and habits. Everyone wins.
                 </p>
               </div>
             </div>
@@ -330,31 +343,31 @@ const KidsWealthBlueprint: React.FC = () => {
 
       {/* Interactive Compounding Chart */}
       <section id="watch-money-grow" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-gradient-to-br from-blue-50/90 to-indigo-50/90 backdrop-blur-sm rounded-3xl p-6 sm:p-8 shadow-xl border-2 border-blue-100 card-interactive">
+        <div className="bg-gradient-to-br from-fuchsia-50/90 via-purple-50/90 to-indigo-50/90 backdrop-blur-sm rounded-3xl p-6 sm:p-8 shadow-xl border-2 border-fuchsia-100 card-interactive">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 text-center">
-            🚀 Watch Your Money Grow!
+            🚀 Watch your money grow (like a game graph)
           </h2>
-          <p className="text-center text-gray-700 mb-4 sm:mb-6 text-base sm:text-lg font-medium">
-            See what happens when you start investing early
+          <p className="text-center text-gray-700 mb-4 sm:mb-6 text-base sm:text-lg font-medium max-w-2xl mx-auto">
+            Move the sliders — the lines show what <em>could</em> happen over time. It&apos;s a learning toy, not a promise of real life (markets bounce around!).
           </p>
 
           {/* Interactive Controls */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 items-start">
             {/* Current Age Card - First */}
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-purple-200 card-interactive ripple-effect flex flex-col">
-              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4 min-h-[3rem]">
-                👶 Current Age
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-1 min-h-[2.5rem]">
+                🎂 How old are you?
               </label>
+              <p className="text-xs text-gray-500 mb-2">Slider: about {KID_AGE_MIN}–{KID_AGE_MAX} (you can type other ages too)</p>
               <input
                 type="range"
-                min="0"
-                max={Math.max(0, targetAge - 1)}
+                min={KID_AGE_MIN}
+                max={startAgeSliderMax}
                 step="1"
                 value={startAge}
                 onChange={(e) => {
                   const age = Number(e.target.value);
-                  const maxAge = Math.max(0, targetAge - 1);
-                  const clampedAge = Math.min(age, maxAge);
+                  const clampedAge = Math.max(KID_AGE_MIN, Math.min(startAgeSliderMax, age));
                   setStartAge(clampedAge);
                   if (clampedAge >= targetAge) {
                     setTargetAge(clampedAge + 1);
@@ -366,30 +379,31 @@ const KidsWealthBlueprint: React.FC = () => {
                 <span className="text-sm text-gray-500 flex-shrink-0 w-4"></span>
                 <input
                   type="text"
+                  inputMode="numeric"
                   value={startAge}
                   onChange={(e) => {
                     const numericValue = e.target.value.replace(/[^0-9]/g, '');
                     if (numericValue === '') {
-                      setStartAge(0);
+                      setStartAge(KID_AGE_MIN);
                     } else {
                       const age = Number(numericValue);
-                      if (!isNaN(age) && age >= 0) {
-                        const maxAge = Math.max(0, targetAge - 1);
+                      if (!isNaN(age) && age >= 0 && age <= 120) {
+                        const maxAge = Math.max(KID_AGE_MIN, targetAge - 1);
                         const clampedAge = Math.min(age, maxAge);
                         setStartAge(clampedAge);
                         if (clampedAge >= targetAge) {
-                          setTargetAge(clampedAge + 1);
+                          setTargetAge(Math.min(KID_TARGET_AGE_MAX, clampedAge + 1));
                         }
                       }
                     }
                   }}
                   onBlur={(e) => {
-                    const age = Number(e.target.value) || 0;
-                    const maxAge = Math.max(0, targetAge - 1);
-                    const clampedAge = Math.max(0, Math.min(maxAge, age));
+                    const raw = Number(e.target.value) || KID_AGE_MIN;
+                    const maxAge = Math.max(KID_AGE_MIN, Math.min(KID_AGE_MAX, targetAge - 1));
+                    const clampedAge = Math.max(KID_AGE_MIN, Math.min(maxAge, raw));
                     setStartAge(clampedAge);
                     if (clampedAge >= targetAge) {
-                      setTargetAge(clampedAge + 1);
+                      setTargetAge(Math.min(KID_TARGET_AGE_MAX, clampedAge + 1));
                     }
                   }}
                   onKeyDown={(e) => {
@@ -399,15 +413,16 @@ const KidsWealthBlueprint: React.FC = () => {
                   }}
                   className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-purple-600 text-center border-2 border-purple-300 rounded-lg py-2 px-2 h-12 focus:outline-none focus:ring-2 focus:ring-purple-500 input-interactive"
                 />
-                <span className="text-sm text-gray-500 flex-shrink-0 w-4"></span>
+                <span className="text-sm text-gray-500 flex-shrink-0">yrs</span>
               </div>
             </div>
 
             {/* Initial Investment Card */}
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-teal-200 card-interactive ripple-effect flex flex-col">
-              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4 min-h-[3rem]">
-                🎁 Initial Investment
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-1 min-h-[2.5rem]">
+                🎁 Starting stash
               </label>
+              <p className="text-xs text-gray-500 mb-2">Money you&apos;re imagining you already have (example only)</p>
               <input
                 type="range"
                 min="0"
@@ -454,14 +469,15 @@ const KidsWealthBlueprint: React.FC = () => {
             </div>
 
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-blue-200 overflow-hidden card-interactive ripple-effect flex flex-col">
-              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4 min-h-[3rem]">
-                💵 Monthly Investment
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-1 min-h-[2.5rem]">
+                💵 Money added each month
               </label>
+              <p className="text-xs text-gray-500 mb-2">Saved or invested with a grown-up&apos;s help — try small amounts too</p>
               <input
                 type="range"
-                min="25"
+                min="5"
                 max="5000"
-                step="25"
+                step="5"
                 value={monthlyAmount}
                 onChange={(e) => setMonthlyAmount(Number(e.target.value))}
                 className="w-full h-4 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-600 mb-3 transition-all duration-300 hover:accent-blue-700"
@@ -497,7 +513,7 @@ const KidsWealthBlueprint: React.FC = () => {
                 />
               </div>
               <div className="flex justify-between mt-2 text-xs text-gray-500">
-                <span>$25</span>
+                <span>$5</span>
                 <span>$5,000</span>
               </div>
               
@@ -509,7 +525,7 @@ const KidsWealthBlueprint: React.FC = () => {
                 >
                   <span className="flex items-center gap-2">
                     <span>⚙️</span>
-                    <span>Adjust contributions by age?</span>
+                    <span>Change the monthly amount at different ages?</span>
                   </span>
                   <span className={`transform transition-transform duration-200 ${showAdvancedContributions ? 'rotate-180' : ''}`}>
                     ▼
@@ -519,7 +535,7 @@ const KidsWealthBlueprint: React.FC = () => {
                 {showAdvancedContributions && (
                   <div className="mt-4 space-y-3 animate-in slide-in-from-top-2 duration-200">
                     <p className="text-xs text-gray-600 mb-3">
-                      <strong>Optional:</strong> Set different contribution amounts at different ages. For example, parents might contribute $100 a month until age 18. And then the child increases it to $400 a month when they start working.
+                      <strong>Optional:</strong> Pretend the monthly amount changes as you get older — e.g. a little now, more when you&apos;re working. Just for learning how the curve moves.
                     </p>
                     {contributionSchedule.map((entry, index) => (
                       <div key={index} className="bg-blue-50 rounded-lg p-3 relative">
@@ -536,7 +552,7 @@ const KidsWealthBlueprint: React.FC = () => {
                                 const numericValue = e.target.value.replace(/[^0-9]/g, '');
                                 if (numericValue === '') {
                                   const updated = [...contributionSchedule];
-                                  updated[index] = { ...updated[index], age: startAge };
+                                  updated[index] = { ...updated[index], age: Math.max(KID_AGE_MIN, startAge) };
                                   setContributionSchedule(updated);
                                 } else {
                                   const age = Number(numericValue);
@@ -678,7 +694,7 @@ const KidsWealthBlueprint: React.FC = () => {
                   <span className="text-green-600 text-base sm:text-lg animate-bounce">↓</span>
                 </div>
                 <div className="text-sm sm:text-base font-bold text-gray-800">(% per year)</div>
-                <p className="text-xs sm:text-sm text-green-700 font-medium mt-1 italic">This is how investing grows your money! See below ↓</p>
+                <p className="text-xs sm:text-sm text-green-700 font-medium mt-1 italic">Higher % = faster growth in this pretend example. Learn more below ↓</p>
               </label>
               <input
                 type="range"
@@ -725,19 +741,20 @@ const KidsWealthBlueprint: React.FC = () => {
             </div>
 
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-orange-200 card-interactive ripple-effect flex flex-col">
-              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-3 sm:mb-4 min-h-[3rem]">
-                🎯 Target Age
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-1 min-h-[2.5rem]">
+                🎯 Future-you age
               </label>
+              <p className="text-xs text-gray-500 mb-2">How old when you check the result? (e.g. finishing school)</p>
               <input
                 type="range"
                 min={startAge + 1}
-                max="100"
+                max={KID_TARGET_AGE_MAX}
                 step="1"
                 value={targetAge}
                 onChange={(e) => {
                   const age = Number(e.target.value);
                   const minAge = startAge + 1;
-                  setTargetAge(Math.max(minAge, age));
+                  setTargetAge(Math.max(minAge, Math.min(KID_TARGET_AGE_MAX, age)));
                 }}
                 className="w-full h-4 bg-orange-200 rounded-lg appearance-none cursor-pointer accent-orange-600 mb-3 transition-all duration-300 hover:accent-orange-700"
               />
@@ -753,14 +770,14 @@ const KidsWealthBlueprint: React.FC = () => {
                     } else {
                       const age = Number(numericValue);
                       if (!isNaN(age) && age > startAge) {
-                        setTargetAge(age);
+                        setTargetAge(Math.min(KID_TARGET_AGE_MAX, age));
                       }
                     }
                   }}
                   onBlur={(e) => {
                     const age = Number(e.target.value) || (startAge + 1);
                     const minAge = startAge + 1;
-                    const clampedAge = Math.max(minAge, Math.min(100, age));
+                    const clampedAge = Math.max(minAge, Math.min(KID_TARGET_AGE_MAX, age));
                     setTargetAge(clampedAge);
                   }}
                   onKeyDown={(e) => {
@@ -787,7 +804,7 @@ const KidsWealthBlueprint: React.FC = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
-                      💡 This is How You Build Wealth Through Investing!
+                      💡 Investing 101 (kid-friendly)
                     </h3>
                     <button
                       onClick={() => setShowEducationalSection(!showEducationalSection)}
@@ -804,22 +821,21 @@ const KidsWealthBlueprint: React.FC = () => {
                   {showEducationalSection && (
                     <div className="animate-in slide-in-from-top-2 duration-200 space-y-1.5 sm:space-y-2">
                   
-                  {/* What is Investing - Simple Explanation for Teenagers - more compact */}
+                  {/* What is Investing - ages ~8–15 */}
                   <div className="bg-blue-50 border border-blue-300 rounded-lg p-1.5 sm:p-2 mb-1 sm:mb-1.5">
-                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 mb-0.5">🤔 What is Investing?</h4>
+                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 mb-0.5">🤔 What is investing?</h4>
                     <p className="text-xs text-gray-700 leading-snug mb-1">
-                      <strong>Investing</strong> is like planting a money tree! Instead of keeping your money in a piggy bank where it just sits there, you put it to work. 
-                      You buy small pieces of companies (called stocks) or funds. As those companies grow, your money grows too! 🚀
+                      <strong>Investing</strong> means letting your money work while you sleep — kind of like XP that earns more XP. 
+                      People often buy tiny slices of lots of companies at once (through something called a fund) instead of betting on one company like a video game skin gamble.
                     </p>
                     <p className="text-xs text-gray-700 leading-snug">
-                      <strong>Think of it this way:</strong> If you save $100, you still have $100 a year later. 
-                      But if you <strong className="text-green-700">invest</strong> that $100, it can grow to $108, $114, or more - 
-                      without you doing anything except being patient!
+                      <strong>Example:</strong> $100 in a piggy bank is still $100 next year. In this <em>educational</em> chart, if money grew {annualReturn}% in a year, 
+                      that $100 would be more like <strong className="text-green-700">${Math.round(100 * (1 + annualReturn / 100))}</strong> — the extra is growth, not magic (real life bounces up and down).
                     </p>
                   </div>
                   
                   <p className="text-xs text-gray-700 leading-snug mb-1">
-                    The <strong className="text-green-700">Return %</strong> above shows how much your money grows <strong>each full year</strong> when you <strong className="text-green-700">invest</strong> it!
+                    The <strong className="text-green-700">Return %</strong> slider is pretend growth per year so you can see how the lines move. Real markets are messier!
                   </p>
                   
                   <div className="bg-white/80 rounded-lg p-1.5 sm:p-2 border border-green-300 mb-1 sm:mb-1.5">
@@ -837,30 +853,28 @@ const KidsWealthBlueprint: React.FC = () => {
                       <div className="flex items-start gap-1.5">
                         <span className="text-lg flex-shrink-0">🚀</span>
                         <div className="min-w-0">
-                          <p className="font-bold text-green-700 text-xs">Investing (Like This Chart!):</p>
+                          <p className="font-bold text-green-700 text-xs">Same numbers, but invested (this chart&apos;s rules):</p>
                           {(() => {
                             const yearlyInvestment = monthlyAmount * 12;
                             const afterOneYear = yearlyInvestment * (1 + annualReturn / 100);
                             const growth = yearlyInvestment * annualReturn / 100;
                             
-                            // Calculate 20-year projection
                             const data20Years = calculateCompound(0, monthlyAmount, 20, annualReturn, 0);
                             const after20Years = data20Years[data20Years.length - 1]?.total || 0;
                             
-                            // Calculate 30-year projection
                             const data30Years = calculateCompound(0, monthlyAmount, 30, annualReturn, 0);
                             const after30Years = data30Years[data30Years.length - 1]?.total || 0;
                             
                             return (
                               <>
                                 <p className="text-xs text-gray-700 mb-1">
-                                  If you invest <strong>${yearlyInvestment.toLocaleString()}</strong> (${monthlyAmount.toLocaleString()}/month × 12) for <strong>one full year</strong> at {annualReturn}% annual return, 
-                                  it grows to <strong className="text-green-700">${Math.round(afterOneYear).toLocaleString()}</strong>! 
-                                  That's <strong className="text-green-700">${Math.round(growth).toLocaleString()}</strong> of <em>free money</em> you earned! 🎉
+                                  In this <strong>made-up math world</strong>, <strong>${yearlyInvestment.toLocaleString()}</strong> a year (${monthlyAmount.toLocaleString()}/mo × 12) at {annualReturn}% becomes about{' '}
+                                  <strong className="text-green-700">${Math.round(afterOneYear).toLocaleString()}</strong> after a year — extra{' '}
+                                  <strong className="text-green-700">${Math.round(growth).toLocaleString()}</strong> on top of what you put in. 🎉
                                 </p>
                                 <p className="text-xs text-gray-700">
-                                  And if you keep doing that for <strong>20 years</strong>, it would grow to <strong className="text-green-700">${after20Years.toLocaleString()}</strong>, 
-                                  and for <strong>30 years</strong> it would grow to <strong className="text-green-700">${after30Years.toLocaleString()}</strong>! 🚀
+                                  Keep the story going: about <strong className="text-green-700">${after20Years.toLocaleString()}</strong> after 20 years and{' '}
+                                  <strong className="text-green-700">${after30Years.toLocaleString()}</strong> after 30 in this demo — not a real forecast! 🚀
                                 </p>
                               </>
                             );
@@ -872,8 +886,8 @@ const KidsWealthBlueprint: React.FC = () => {
                   
                   <div className="bg-yellow-50 border-l-2 border-yellow-400 rounded-r p-1.5 sm:p-2">
                     <p className="text-xs text-gray-800 font-semibold">
-                      💰 <strong>The Secret:</strong> When you invest, your money makes money. Then that money makes more money. That's called <strong className="text-green-700">compounding</strong> - and it's how real wealth is built! 
-                      Watch the blue line in the chart below grow faster and faster over time. That's the magic of investing! ✨
+                      💰 <strong>The cool part:</strong> growth can stack on top of growth — that&apos;s <strong className="text-green-700">compounding</strong>. 
+                      Watch the blue line bend upward in the chart. In real life it won&apos;t be this smooth, but the idea is real: time + steady saving = powerful. ✨
                     </p>
                   </div>
                     </div>
@@ -1039,7 +1053,7 @@ const KidsWealthBlueprint: React.FC = () => {
                   <div className={`${isMobile ? 'text-base sm:text-lg' : 'text-lg sm:text-xl'} font-extrabold mb-0.5 leading-tight`}>
                     ${totalGrowth >= 1000000 ? `${(totalGrowth / 1000000).toFixed(1)}M` : totalGrowth >= 1000 ? `${(totalGrowth / 1000).toFixed(0)}k` : totalGrowth.toLocaleString()}
                   </div>
-                  <div className={`${isMobile ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} font-semibold opacity-95 leading-tight`}>Free Money!</div>
+                  <div className={`${isMobile ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} font-semibold opacity-95 leading-tight`}>Extra from growth</div>
                 </div>
               </div>
             </div>
@@ -1047,128 +1061,116 @@ const KidsWealthBlueprint: React.FC = () => {
 
           <div className="bg-yellow-50 border-2 border-yellow-300 rounded-2xl p-4 sm:p-6 text-center">
             <p className="text-lg sm:text-2xl font-bold text-gray-800 mb-2">
-              🎉 Starting at age <span className="text-purple-600">{startAge}</span> with <span className="text-blue-600">${monthlyAmount}/month</span>
+              🎉 In this story, age <span className="text-purple-600">{startAge}</span> + <span className="text-blue-600">${monthlyAmount}/month</span>
             </p>
             <p className="text-base sm:text-xl text-gray-700">
-              By age <span className="text-orange-600 font-bold">{targetAge}</span>, you could have{' '}
+              By age <span className="text-orange-600 font-bold">{targetAge}</span>, the graph shows about{' '}
               <span className="text-blue-600 font-bold text-2xl sm:text-3xl">${finalAmount.toLocaleString()}</span>
             </p>
             <p className="text-sm sm:text-lg text-gray-600 mt-3">
-              That's <strong>${totalGrowth.toLocaleString()}</strong> in free growth money! 🚀
+              About <strong>${totalGrowth.toLocaleString()}</strong> of that is growth in this example — not a real-world promise! 🚀
             </p>
           </div>
         </div>
       </section>
 
-      {/* 7-Step Kids Wealth Blueprint */}
+      {/* 7 ideas — for kids ~8–15 (grown-ups help with the real accounts) */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <h2 className="text-4xl font-bold text-gray-900 mb-12 text-center">
-          7-Step Kids Wealth Blueprint
+        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 text-center">
+          7 power-ups for future-you
         </h2>
+        <p className="text-center text-gray-600 max-w-2xl mx-auto mb-10 text-sm sm:text-base">
+          Think of these as levels in a game. Some need a parent or carer — that&apos;s normal. The win is understanding, not rushing.
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Step 1 */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 card-interactive">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-fuchsia-100 card-interactive">
             <div className="flex items-center justify-center mb-4">
               <Icon emoji="🏦" />
             </div>
-            <div className="text-2xl font-bold text-blue-600 mb-2">Step 1</div>
+            <div className="text-2xl font-bold text-fuchsia-600 mb-2">Level 1</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">
-              Open Their First Investment Account
+              Know what an investment account is
             </h3>
-            <p className="text-gray-700 leading-relaxed">
-              Help them open a basic brokerage account. No hype apps, no day trading, no distraction – 
-              just a clean foundation to start learning how money grows.
+            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+              It&apos;s a special place grown-ups can open so money can be invested safely and tracked — not the same as a game wallet. Ask questions; you&apos;re allowed to be curious.
             </p>
           </div>
 
-          {/* Step 2 */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 card-interactive">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-fuchsia-100 card-interactive">
             <div className="flex items-center justify-center mb-4">
               <Icon emoji="📈" />
             </div>
-            <div className="text-2xl font-bold text-blue-600 mb-2">Step 2</div>
+            <div className="text-2xl font-bold text-fuchsia-600 mb-2">Level 2</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">
-              Start With a Low-Cost Index Fund
+              Learn what &quot;index&quot; means
             </h3>
-            <p className="text-gray-700 leading-relaxed">
-              Forget stock-picking. Show them how to buy the whole market through one low-cost index fund 
-              (like an S&P 500 ETF). Diversified, simple, and proven – perfect for beginners.
+            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+              Instead of one company, picture a whole basket of companies — like a team roster instead of one player. People study these in school and on YouTube; it&apos;s a common learning topic.
             </p>
           </div>
 
-          {/* Step 3 */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 card-interactive">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-fuchsia-100 card-interactive">
             <div className="flex items-center justify-center mb-4">
               <Icon emoji="💻" />
             </div>
-            <div className="text-2xl font-bold text-blue-600 mb-2">Step 3</div>
+            <div className="text-2xl font-bold text-fuchsia-600 mb-2">Level 3</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">
-              Add a Small Amount of Tech Exposure
+              Tech &amp; innovation — a small slice of the story
             </h3>
-            <p className="text-gray-700 leading-relaxed">
-              Young people have one advantage adults don't: time. A small NASDAQ-style ETF gives them 
-              exposure to the world's biggest tech companies and long-term innovation.
+            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+              Lots of gadgets and apps you use come from listed companies. Learning how &quot;the whole market&quot; moves is often more boring — and that can be a good thing for beginners.
             </p>
           </div>
 
-          {/* Step 4 */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 card-interactive">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-fuchsia-100 card-interactive">
             <div className="flex items-center justify-center mb-4">
               <Icon emoji="💰" />
             </div>
-            <div className="text-2xl font-bold text-blue-600 mb-2">Step 4</div>
+            <div className="text-2xl font-bold text-fuchsia-600 mb-2">Level 4</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">
-              Introduce Dividend Investing Early
+              Dividends = little bonuses some investments pay
             </h3>
-            <p className="text-gray-700 leading-relaxed">
-              Teach them that the real goal isn't just earning money – it's having money that earns for them. 
-              Start with a dividend ETF and reinvest the payouts so they can see compounding in real time.
+            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+              Sometimes companies share profits with investors. Reinvesting those tiny amounts is one way compounding shows up in real life — ask a trusted adult to show you an example.
             </p>
           </div>
 
-          {/* Step 5 */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 card-interactive">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-fuchsia-100 card-interactive">
             <div className="flex items-center justify-center mb-4">
               <Icon emoji="🏃" />
             </div>
-            <div className="text-2xl font-bold text-blue-600 mb-2">Step 5</div>
+            <div className="text-2xl font-bold text-fuchsia-600 mb-2">Level 5</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">
-              Focus on Endurance, Not Excitement
+              Boring beats FOMO
             </h3>
-            <p className="text-gray-700 leading-relaxed">
-              Most people fail not because they choose the wrong investments, but because they can't stay 
-              consistent. Show your kids that patience beats prediction, and sticking with the plan beats 
-              chasing the next hot tip.
+            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+              Scrolling hype and &quot;get rich quick&quot; clips is loud. Slow and steady is how many people who actually finish the race describe it. Your chart above is the quiet version.
             </p>
           </div>
 
-          {/* Step 6 */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 card-interactive">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-fuchsia-100 card-interactive">
             <div className="flex items-center justify-center mb-4">
               <Icon emoji="⚙️" />
             </div>
-            <div className="text-2xl font-bold text-blue-600 mb-2">Step 6</div>
+            <div className="text-2xl font-bold text-fuchsia-600 mb-2">Level 6</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">
-              Automate Everything
+              Automate = set it and forget it
             </h3>
-            <p className="text-gray-700 leading-relaxed">
-              The best investors don't check their portfolios every day. Set up automatic monthly investing 
-              and let time do the heavy lifting. That's how real millionaires are made.
+            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+              A regular small transfer beats remembering every month. Grown-ups can help set this up so you focus on school, sport, and whatever you&apos;re into.
             </p>
           </div>
 
-          {/* Step 7 */}
-          <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-100 md:col-span-2 lg:col-span-1">
+          <div className="bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow border border-fuchsia-100 md:col-span-2 lg:col-span-1">
             <div className="flex items-center justify-center mb-4">
               <Icon emoji="✨" />
             </div>
-            <div className="text-2xl font-bold text-blue-600 mb-2">Step 7</div>
+            <div className="text-2xl font-bold text-fuchsia-600 mb-2">Level 7</div>
             <h3 className="text-xl font-semibold text-gray-900 mb-3">
-              Trust the Process: Money Grows Slow, Then Suddenly
+              The curve gets wild later — that&apos;s the point
             </h3>
-            <p className="text-gray-700 leading-relaxed">
-              Compounding feels slow for years, then explodes in the final decade. The magic happens when 
-              everyone else has given up. Teach them to stay invested long enough to see the payoff.
+            <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+              Early years feel flat. Later, the same habits matter more because time stacked up. You&apos;re not &quot;behind&quot; at 12 or 14 — you&apos;re early to the idea.
             </p>
           </div>
         </div>
@@ -1177,9 +1179,9 @@ const KidsWealthBlueprint: React.FC = () => {
       {/* Compounding Example Highlight Box */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-4 sm:p-6 md:p-8 lg:p-12 shadow-2xl text-white">
-          <h2 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 sm:mb-4 md:mb-6 text-center">💰 The Magic of Starting Early</h2>
+          <h2 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 sm:mb-4 md:mb-6 text-center">💰 Starting early is your cheat code</h2>
           <p className="text-base sm:text-lg md:text-2xl leading-relaxed text-center mb-4 sm:mb-6 md:mb-8 font-semibold">
-            Start young. Stay consistent. Watch it grow. 🚀
+            Same energy as grinding a save file — but for future money. 🚀
           </p>
           
           {/* Simple visual bars - stack on mobile, horizontal on desktop */}
@@ -1199,68 +1201,68 @@ const KidsWealthBlueprint: React.FC = () => {
             <div className="text-center transform hover:scale-110 transition-transform">
               <div className="bg-white/40 rounded-xl p-4 sm:p-3 md:p-6 mb-2">
                 <div className="text-3xl sm:text-2xl md:text-4xl font-bold">$1.2M+</div>
-                <div className="text-sm sm:text-xs md:text-base opacity-90 mt-2">You Win! 🎉</div>
+                <div className="text-sm sm:text-xs md:text-base opacity-90 mt-2">High score energy 🎉</div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Quick Recap Checklist */}
+      {/* Quick recap */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-          Quick Recap: The Kids Wealth Blueprint
+          Your recap (stick this on a mental sticker)
         </h2>
-        <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 sm:p-12 shadow-lg border border-gray-100 card-interactive">
-          <ul className="space-y-4 text-lg text-gray-700 max-w-2xl mx-auto">
+        <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 sm:p-12 shadow-lg border border-fuchsia-100 card-interactive">
+          <ul className="space-y-4 text-base sm:text-lg text-gray-700 max-w-2xl mx-auto">
             <li className="flex items-start">
-              <span className="text-green-500 mr-3 text-2xl">✓</span>
-              <span>Open a brokerage account</span>
+              <span className="text-fuchsia-500 mr-3 text-2xl">✓</span>
+              <span>Learn what an investment account is (grown-up helps with the real one)</span>
             </li>
             <li className="flex items-start">
-              <span className="text-green-500 mr-3 text-2xl">✓</span>
-              <span>Invest in a low-cost index fund</span>
+              <span className="text-fuchsia-500 mr-3 text-2xl">✓</span>
+              <span>&quot;Index&quot; = many companies in one bundle — teamwork for dollars</span>
             </li>
             <li className="flex items-start">
-              <span className="text-green-500 mr-3 text-2xl">✓</span>
-              <span>Add a little tech exposure</span>
+              <span className="text-fuchsia-500 mr-3 text-2xl">✓</span>
+              <span>Small amounts + time = the graph bends up (in our learning example)</span>
             </li>
             <li className="flex items-start">
-              <span className="text-green-500 mr-3 text-2xl">✓</span>
-              <span>Reinvest dividends</span>
+              <span className="text-fuchsia-500 mr-3 text-2xl">✓</span>
+              <span>Boring and steady often beats loud hype</span>
             </li>
             <li className="flex items-start">
-              <span className="text-green-500 mr-3 text-2xl">✓</span>
-              <span>Automate monthly investing</span>
+              <span className="text-fuchsia-500 mr-3 text-2xl">✓</span>
+              <span>Automation = less willpower needed</span>
             </li>
             <li className="flex items-start">
-              <span className="text-green-500 mr-3 text-2xl">✓</span>
-              <span>Stay consistent for decades</span>
+              <span className="text-fuchsia-500 mr-3 text-2xl">✓</span>
+              <span>You&apos;re not late — you&apos;re learning early</span>
             </li>
           </ul>
-          <p className="text-center text-xl text-gray-800 font-semibold mt-8 pt-8 border-t border-gray-200">
-            No shortcuts. No hype. Just smart, simple, long-term wealth building for your kids.
+          <p className="text-center text-lg sm:text-xl text-gray-800 font-semibold mt-8 pt-8 border-t border-gray-200">
+            Real life has fees, taxes, and bumpy markets — this page is here to teach ideas, not predict your exact future.
           </p>
         </div>
       </section>
 
       {/* Final Call-to-Action */}
       <section id="kids-cta" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="bg-gradient-to-br from-indigo-600 to-blue-600 rounded-2xl p-8 sm:p-12 shadow-2xl text-white text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-            Ready to Build Your Kids' Wealth Blueprint?
+        <div className="bg-gradient-to-br from-fuchsia-600 via-purple-600 to-indigo-600 rounded-2xl p-8 sm:p-12 shadow-2xl text-white text-center">
+          <h2 className="text-2xl sm:text-4xl font-bold mb-4">
+            Grown-ups: want help explaining this IRL?
           </h2>
-          <p className="text-xl leading-relaxed mb-8 max-w-2xl mx-auto">
-            I help parents and teenagers set this up in a simple, step-by-step way – no jargon, no pressure. 
-            If you'd like help designing a personalised Kids Wealth Blueprint for your family, let's talk.
+          <p className="text-base sm:text-xl leading-relaxed mb-8 max-w-2xl mx-auto opacity-95">
+            Kids can explore here for free. If you&apos;d like a calm, step-by-step walkthrough for your family — 
+            no jargon, no pressure — we can book a chat.
           </p>
           <a
             href="https://wealthbydesign.vercel.app/contact"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-white text-blue-600 font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+            className="inline-block bg-white text-fuchsia-700 font-semibold py-4 px-8 rounded-lg text-lg transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
           >
-            Book a Kids Wealth Blueprint Session
+            Book a family chat
           </a>
         </div>
       </section>
