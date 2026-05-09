@@ -10,14 +10,21 @@ function nowLabel(): string {
 type FamilyProps = Omit<FamilyReportInput, 'generatedAt'>;
 
 export const FamilyWealthReportExport: React.FC<FamilyProps> = (props) => {
-  const build = () =>
-    buildFamilyReportHtml({
-      ...props,
-      generatedAt: nowLabel(),
-    });
+  const build = () => {
+    try {
+      return buildFamilyReportHtml({
+        ...props,
+        generatedAt: nowLabel(),
+      });
+    } catch (error) {
+      console.error('Failed to build family report HTML', error);
+      window.alert('Sorry, report generation failed. Please try again.');
+      throw error;
+    }
+  };
 
   return (
-    <div className="mt-5 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3">
+    <div className="relative z-20 mt-5 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 pointer-events-auto">
       <button
         type="button"
         onClick={() => exportReportToPdf(build(), 'Family Wealth Blueprint Report')}
@@ -66,14 +73,21 @@ export const FamilyWealthReportExport: React.FC<FamilyProps> = (props) => {
 type KidsProps = Omit<KidsReportInput, 'generatedAt'>;
 
 export const KidsWealthReportExport: React.FC<KidsProps> = (props) => {
-  const build = () =>
-    buildKidsReportHtml({
-      ...props,
-      generatedAt: nowLabel(),
-    });
+  const build = () => {
+    try {
+      return buildKidsReportHtml({
+        ...props,
+        generatedAt: nowLabel(),
+      });
+    } catch (error) {
+      console.error('Failed to build kids report HTML', error);
+      window.alert('Sorry, report generation failed. Please try again.');
+      throw error;
+    }
+  };
 
   return (
-    <div className="mt-5 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3">
+    <div className="relative z-20 mt-5 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 pointer-events-auto">
       <button
         type="button"
         onClick={() => exportReportToPdf(build(), 'Kids Wealth Blueprint Report')}
