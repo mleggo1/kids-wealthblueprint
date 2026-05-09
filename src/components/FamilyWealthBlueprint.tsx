@@ -10,6 +10,7 @@ import {
   Legend,
   ReferenceLine,
 } from 'recharts';
+import { FamilyWealthReportExport } from './wealthReport/WealthReportExport';
 
 /** Minimum selectable "current age" for the calculator (fully flexible for any age). */
 const MIN_CURRENT_AGE = 1;
@@ -1236,6 +1237,24 @@ const FamilyWealthBlueprint: React.FC = () => {
               That's <strong>${totalGrowth.toLocaleString()}</strong> in free growth money! 🚀
             </p>
           </div>
+
+          <FamilyWealthReportExport
+            chartData={chartData}
+            startAge={startAge}
+            targetAge={targetAge}
+            initialInvestment={initialInvestment}
+            monthlySuper={monthlySuper}
+            monthlyPersonal={monthlyPersonal}
+            annualReturn={annualReturn}
+            finalAmount={finalAmount}
+            totalContributed={totalContributed}
+            totalGrowth={totalGrowth}
+            showAdvancedContributions={showAdvancedContributions}
+            contributionSchedule={contributionSchedule}
+            showTakeABreak={showTakeABreak}
+            breakPeriodsSuper={breakPeriodsSuper}
+            breakPeriodsPersonal={breakPeriodsPersonal}
+          />
         </div>
       </section>
 

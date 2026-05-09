@@ -10,6 +10,7 @@ import {
   Legend,
   ReferenceLine,
 } from 'recharts';
+import { KidsWealthReportExport } from './wealthReport/WealthReportExport';
 
 /** Tweens & early teens — slider defaults; text field can go slightly outside for demos. */
 const KID_AGE_MIN = 8;
@@ -1071,6 +1072,20 @@ const KidsWealthBlueprint: React.FC = () => {
               About <strong>${totalGrowth.toLocaleString()}</strong> of that is growth in this example — not a real-world promise! 🚀
             </p>
           </div>
+
+          <KidsWealthReportExport
+            chartData={chartData}
+            startAge={startAge}
+            targetAge={targetAge}
+            initialInvestment={initialInvestment}
+            monthlyAmount={monthlyAmount}
+            annualReturn={annualReturn}
+            finalAmount={finalAmount}
+            totalContributed={totalContributed}
+            totalGrowth={totalGrowth}
+            showAdvancedContributions={showAdvancedContributions}
+            contributionSchedule={contributionSchedule}
+          />
         </div>
       </section>
 
