@@ -11,6 +11,9 @@ import {
   ReferenceLine,
 } from 'recharts';
 
+/** Minimum selectable "current age" for the calculator (fully flexible for any age). */
+const MIN_CURRENT_AGE = 1;
+
 // Simple icon components (can be replaced with actual SVGs later)
 const Icon = ({ emoji, className = '' }: { emoji: string; className?: string }) => (
   <span className={`text-4xl ${className}`}>{emoji}</span>
@@ -374,14 +377,14 @@ const FamilyWealthBlueprint: React.FC = () => {
               </label>
               <input
                 type="range"
-                min="18"
-                max={Math.max(18, targetAge - 1)}
+                min={MIN_CURRENT_AGE}
+                max={Math.max(MIN_CURRENT_AGE, targetAge - 1)}
                 step="1"
                 value={startAge}
                 onChange={(e) => {
                   const age = Number(e.target.value);
-                  const maxAge = Math.max(18, targetAge - 1);
-                  const clampedAge = Math.max(18, Math.min(age, maxAge));
+                  const maxAge = Math.max(MIN_CURRENT_AGE, targetAge - 1);
+                  const clampedAge = Math.max(MIN_CURRENT_AGE, Math.min(age, maxAge));
                   setStartAge(clampedAge);
                   if (clampedAge >= targetAge) {
                     setTargetAge(clampedAge + 1);
@@ -398,7 +401,7 @@ const FamilyWealthBlueprint: React.FC = () => {
                   onChange={(e) => {
                     const numericValue = e.target.value.replace(/[^0-9]/g, '');
                     if (numericValue === '') {
-                      setStartAge(18);
+                      setStartAge(MIN_CURRENT_AGE);
                     } else {
                       const age = Number(numericValue);
                       if (!isNaN(age) && age >= 0 && age <= 120) {
@@ -415,9 +418,9 @@ const FamilyWealthBlueprint: React.FC = () => {
                     }, 0);
                   }}
                   onBlur={(e) => {
-                    const age = Number(e.target.value) || 18;
-                    const maxAge = Math.max(18, targetAge - 1);
-                    const clampedAge = Math.max(18, Math.min(maxAge, age));
+                    const age = Number(e.target.value) || MIN_CURRENT_AGE;
+                    const maxAge = Math.max(MIN_CURRENT_AGE, targetAge - 1);
+                    const clampedAge = Math.max(MIN_CURRENT_AGE, Math.min(maxAge, age));
                     setStartAge(clampedAge);
                     if (clampedAge >= targetAge) {
                       setTargetAge(clampedAge + 1);
@@ -700,7 +703,7 @@ const FamilyWealthBlueprint: React.FC = () => {
                                 const numericValue = e.target.value.replace(/[^0-9]/g, '');
                                 if (numericValue === '') {
                                   const updated = [...contributionSchedule];
-                                  updated[index] = { ...updated[index], age: Math.max(18, startAge) };
+                                  updated[index] = { ...updated[index], age: Math.max(MIN_CURRENT_AGE, startAge) };
                                   setContributionSchedule(updated);
                                 } else {
                                   const age = Number(numericValue);
