@@ -48,7 +48,7 @@ function App() {
                   <button
                     type="button"
                     role="tab"
-                    aria-selected={tab === 'family' ? 'true' : 'false'}
+                    aria-selected={tab === 'family'}
                     onClick={() => setTab('family')}
                     className={`relative flex-1 min-w-0 overflow-hidden rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-left sm:text-center transition-all duration-200 flex items-center gap-1.5 sm:justify-center sm:gap-1.5 ${
                       tab === 'family'
@@ -69,7 +69,7 @@ function App() {
                   <button
                     type="button"
                     role="tab"
-                    aria-selected={tab === 'kids' ? 'true' : 'false'}
+                    aria-selected={tab === 'kids'}
                     onClick={() => setTab('kids')}
                     className={`relative flex-1 min-w-0 overflow-hidden rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 text-left sm:text-center transition-all duration-200 flex items-center gap-1.5 sm:justify-center sm:gap-1.5 ${
                       tab === 'kids'
