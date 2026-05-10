@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import {
   ResponsiveContainer,
   LineChart,
@@ -11,6 +11,7 @@ import {
   ReferenceLine,
 } from 'recharts';
 import { buildKidsReportHtml } from './wealthReport/kidsReportHtml';
+import { captureElementAsPngDataUrl } from './wealthReport/captureChartForPdf';
 import { exportReportToPdf } from './wealthReport/openReportWindow';
 
 /** Tweens & early teens — slider defaults; text field can go slightly outside for demos. */
@@ -80,6 +81,8 @@ type KidsWealthBlueprintProps = {
 };
 
 const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef }) => {
+  const chartForPdfRef = useRef<HTMLDivElement>(null);
+
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
   
@@ -144,6 +147,7 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
 
   const runPdfExport = useCallback(async () => {
     try {
+      const chartImageDataUrl = await captureElementAsPngDataUrl(chartForPdfRef.current);
       const generatedAt = new Date().toLocaleString(undefined, { dateStyle: 'long', timeStyle: 'short' });
       const html = buildKidsReportHtml({
         generatedAt,
@@ -158,6 +162,7 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
         chartData,
         showAdvancedContributions,
         contributionSchedule,
+        chartImageDataUrl,
       });
       await exportReportToPdf(html, `kids-wealth-blueprint-${new Date().toISOString().slice(0, 10)}.pdf`);
     } catch (error) {
@@ -947,7 +952,10 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
           </div>
 
           {/* Chart */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 sm:p-3 shadow-lg mb-8 w-full card-interactive relative">
+          <div
+            ref={chartForPdfRef}
+            className="bg-white/90 backdrop-blur-sm rounded-xl p-2 sm:p-3 shadow-lg mb-8 w-full card-interactive relative"
+          >
             <ResponsiveContainer width="100%" height={isMobile ? 400 : 550}>
               <LineChart 
                 data={chartData} 

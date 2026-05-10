@@ -17,6 +17,8 @@ export type FamilyReportInput = {
   showTakeABreak: boolean;
   breakPeriodsSuper: Array<{ fromAge: number; toAge: number }>;
   breakPeriodsPersonal: Array<{ fromAge: number; toAge: number }>;
+  /** PNG data URL of the on-screen chart (optional). */
+  chartImageDataUrl: string | null;
 };
 
 function sampleRows(data: FamilyChartRow[]): FamilyChartRow[] {
@@ -96,11 +98,16 @@ export function buildFamilyReportHtml(input: FamilyReportInput): string {
     th { text-align: left; padding: 8px; background: #f3f4f6; border-bottom: 2px solid #d1d5db; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: #374151; }
     th.r, td.r { text-align: right; }
     .disclaimer { font-size: 11px; color: #6b7280; line-height: 1.5; margin-top: 24px; padding-top: 16px; border-top: 1px solid #e5e7eb; break-inside: avoid; page-break-inside: avoid; }
+    .chart-card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; background: #fafafa; break-inside: avoid; page-break-inside: avoid; }
+    .chart-card h2 { margin: 0 0 10px; font-size: 14px; text-transform: uppercase; letter-spacing: 0.06em; color: #4b5563; }
+    .chart-figure { margin: 0; width: 100%; text-align: center; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px; box-sizing: border-box; }
+    .chart-figure img { display: block; margin: 0 auto; max-width: 100%; width: auto; height: auto; max-height: 340px; object-fit: contain; }
+    .chart-note { font-size: 11px; color: #6b7280; margin: 10px 0 0; text-align: center; line-height: 1.4; }
     @page { size: A4; margin: 14mm; }
     @media print {
       body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
       .wrap { padding: 0; max-width: none; }
-      .hero, .highlight, .card, .disclaimer, .stat { break-inside: avoid; page-break-inside: avoid; }
+      .hero, .highlight, .card, .chart-card, .disclaimer, .stat { break-inside: avoid; page-break-inside: avoid; }
     }
   </style>
 </head>
@@ -115,6 +122,16 @@ export function buildFamilyReportHtml(input: FamilyReportInput): string {
       <div class="stat"><div class="n">$${input.finalAmount.toLocaleString()}</div><div class="l">Total at age ${input.targetAge}</div></div>
       <div class="stat"><div class="n">$${input.totalContributed.toLocaleString()}</div><div class="l">Total contributed</div></div>
       <div class="stat"><div class="n">$${input.totalGrowth.toLocaleString()}</div><div class="l">Growth (illustrative)</div></div>
+    </div>
+
+    <div class="chart-card">
+      <h2>Growth chart</h2>
+      ${
+        input.chartImageDataUrl
+          ? `<figure class="chart-figure"><img src="${input.chartImageDataUrl}" alt="Wealth projection chart: total value and amount invested by age"/></figure>
+      <p class="chart-note">Snapshot from your calculator (blue = total value, green = invested). Sized to fit one page clearly.</p>`
+          : `<p class="chart-note">Chart snapshot was not available. Use the on-screen graph for the full visual.</p>`
+      }
     </div>
 
     <div class="card">

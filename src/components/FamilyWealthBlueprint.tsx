@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import {
   ResponsiveContainer,
   LineChart,
@@ -11,6 +11,7 @@ import {
   ReferenceLine,
 } from 'recharts';
 import { buildFamilyReportHtml } from './wealthReport/familyReportHtml';
+import { captureElementAsPngDataUrl } from './wealthReport/captureChartForPdf';
 import { exportReportToPdf } from './wealthReport/openReportWindow';
 
 /** Minimum selectable "current age" for the calculator (fully flexible for any age). */
@@ -96,6 +97,8 @@ type FamilyWealthBlueprintProps = {
 };
 
 const FamilyWealthBlueprint: React.FC<FamilyWealthBlueprintProps> = ({ pdfExportRef }) => {
+  const chartForPdfRef = useRef<HTMLDivElement>(null);
+
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
   
@@ -163,6 +166,7 @@ const FamilyWealthBlueprint: React.FC<FamilyWealthBlueprintProps> = ({ pdfExport
 
   const runPdfExport = useCallback(async () => {
     try {
+      const chartImageDataUrl = await captureElementAsPngDataUrl(chartForPdfRef.current);
       const generatedAt = new Date().toLocaleString(undefined, { dateStyle: 'long', timeStyle: 'short' });
       const html = buildFamilyReportHtml({
         generatedAt,
@@ -181,6 +185,7 @@ const FamilyWealthBlueprint: React.FC<FamilyWealthBlueprintProps> = ({ pdfExport
         showTakeABreak,
         breakPeriodsSuper,
         breakPeriodsPersonal,
+        chartImageDataUrl,
       });
       await exportReportToPdf(html, `family-wealth-blueprint-${new Date().toISOString().slice(0, 10)}.pdf`);
     } catch (error) {
@@ -1113,7 +1118,10 @@ const FamilyWealthBlueprint: React.FC<FamilyWealthBlueprintProps> = ({ pdfExport
           </div>
 
           {/* Chart */}
-          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 sm:p-3 shadow-lg mb-8 w-full card-interactive relative">
+          <div
+            ref={chartForPdfRef}
+            className="bg-white/90 backdrop-blur-sm rounded-xl p-2 sm:p-3 shadow-lg mb-8 w-full card-interactive relative"
+          >
             <ResponsiveContainer width="100%" height={isMobile ? 400 : 550}>
               <LineChart 
                 data={chartData} 
