@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   ResponsiveContainer,
   LineChart,
@@ -10,7 +10,8 @@ import {
   Legend,
   ReferenceLine,
 } from 'recharts';
-import { FamilyWealthReportExport } from './wealthReport/WealthReportExport';
+import { buildFamilyReportHtml } from './wealthReport/familyReportHtml';
+import { exportReportToPdf } from './wealthReport/openReportWindow';
 
 /** Minimum selectable "current age" for the calculator (fully flexible for any age). */
 const MIN_CURRENT_AGE = 1;
@@ -90,7 +91,11 @@ const calculateCompound = (
   return data;
 };
 
-const FamilyWealthBlueprint: React.FC = () => {
+type FamilyWealthBlueprintProps = {
+  pdfExportRef: React.MutableRefObject<(() => Promise<void>) | null>;
+};
+
+const FamilyWealthBlueprint: React.FC<FamilyWealthBlueprintProps> = ({ pdfExportRef }) => {
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
   
@@ -155,6 +160,57 @@ const FamilyWealthBlueprint: React.FC = () => {
   const finalAmount = chartData[chartData.length - 1]?.total || 0;
   const totalContributed = chartData[chartData.length - 1]?.contributed || 0;
   const totalGrowth = chartData[chartData.length - 1]?.growth || 0;
+
+  const runPdfExport = useCallback(async () => {
+    try {
+      const generatedAt = new Date().toLocaleString(undefined, { dateStyle: 'long', timeStyle: 'short' });
+      const html = buildFamilyReportHtml({
+        generatedAt,
+        startAge,
+        targetAge,
+        initialInvestment,
+        monthlySuper,
+        monthlyPersonal,
+        annualReturn,
+        finalAmount,
+        totalContributed,
+        totalGrowth,
+        chartData,
+        showAdvancedContributions,
+        contributionSchedule,
+        showTakeABreak,
+        breakPeriodsSuper,
+        breakPeriodsPersonal,
+      });
+      await exportReportToPdf(html, `family-wealth-blueprint-${new Date().toISOString().slice(0, 10)}.pdf`);
+    } catch (error) {
+      console.error(error);
+      window.alert('Could not create the PDF. Please try again.');
+    }
+  }, [
+    startAge,
+    targetAge,
+    initialInvestment,
+    monthlySuper,
+    monthlyPersonal,
+    annualReturn,
+    finalAmount,
+    totalContributed,
+    totalGrowth,
+    chartData,
+    showAdvancedContributions,
+    contributionSchedule,
+    showTakeABreak,
+    breakPeriodsSuper,
+    breakPeriodsPersonal,
+  ]);
+
+  useEffect(() => {
+    pdfExportRef.current = runPdfExport;
+    return () => {
+      pdfExportRef.current = null;
+    };
+  }, [pdfExportRef, runPdfExport]);
 
   // Calculate max value for Y-axis - find true max across all series, then snap to first nice step above
   const maxValue = useMemo(() => {
@@ -1238,23 +1294,6 @@ const FamilyWealthBlueprint: React.FC = () => {
             </p>
           </div>
 
-          <FamilyWealthReportExport
-            chartData={chartData}
-            startAge={startAge}
-            targetAge={targetAge}
-            initialInvestment={initialInvestment}
-            monthlySuper={monthlySuper}
-            monthlyPersonal={monthlyPersonal}
-            annualReturn={annualReturn}
-            finalAmount={finalAmount}
-            totalContributed={totalContributed}
-            totalGrowth={totalGrowth}
-            showAdvancedContributions={showAdvancedContributions}
-            contributionSchedule={contributionSchedule}
-            showTakeABreak={showTakeABreak}
-            breakPeriodsSuper={breakPeriodsSuper}
-            breakPeriodsPersonal={breakPeriodsPersonal}
-          />
         </div>
       </section>
 

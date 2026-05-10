@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   ResponsiveContainer,
   LineChart,
@@ -10,7 +10,8 @@ import {
   Legend,
   ReferenceLine,
 } from 'recharts';
-import { KidsWealthReportExport } from './wealthReport/WealthReportExport';
+import { buildKidsReportHtml } from './wealthReport/kidsReportHtml';
+import { exportReportToPdf } from './wealthReport/openReportWindow';
 
 /** Tweens & early teens — slider defaults; text field can go slightly outside for demos. */
 const KID_AGE_MIN = 8;
@@ -74,7 +75,11 @@ const calculateCompound = (
   return data;
 };
 
-const KidsWealthBlueprint: React.FC = () => {
+type KidsWealthBlueprintProps = {
+  pdfExportRef: React.MutableRefObject<(() => Promise<void>) | null>;
+};
+
+const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef }) => {
   // Mobile detection
   const [isMobile, setIsMobile] = useState(false);
   
@@ -136,6 +141,49 @@ const KidsWealthBlueprint: React.FC = () => {
   const finalAmount = chartData[chartData.length - 1]?.total || 0;
   const totalContributed = chartData[chartData.length - 1]?.contributed || 0;
   const totalGrowth = chartData[chartData.length - 1]?.growth || 0;
+
+  const runPdfExport = useCallback(async () => {
+    try {
+      const generatedAt = new Date().toLocaleString(undefined, { dateStyle: 'long', timeStyle: 'short' });
+      const html = buildKidsReportHtml({
+        generatedAt,
+        startAge,
+        targetAge,
+        initialInvestment,
+        monthlyAmount,
+        annualReturn,
+        finalAmount,
+        totalContributed,
+        totalGrowth,
+        chartData,
+        showAdvancedContributions,
+        contributionSchedule,
+      });
+      await exportReportToPdf(html, `kids-wealth-blueprint-${new Date().toISOString().slice(0, 10)}.pdf`);
+    } catch (error) {
+      console.error(error);
+      window.alert('Could not create the PDF. Please try again.');
+    }
+  }, [
+    startAge,
+    targetAge,
+    initialInvestment,
+    monthlyAmount,
+    annualReturn,
+    finalAmount,
+    totalContributed,
+    totalGrowth,
+    chartData,
+    showAdvancedContributions,
+    contributionSchedule,
+  ]);
+
+  useEffect(() => {
+    pdfExportRef.current = runPdfExport;
+    return () => {
+      pdfExportRef.current = null;
+    };
+  }, [pdfExportRef, runPdfExport]);
 
   // Calculate max value for Y-axis - find true max across all series, then snap to first nice step above
   const maxValue = useMemo(() => {
@@ -1073,19 +1121,6 @@ const KidsWealthBlueprint: React.FC = () => {
             </p>
           </div>
 
-          <KidsWealthReportExport
-            chartData={chartData}
-            startAge={startAge}
-            targetAge={targetAge}
-            initialInvestment={initialInvestment}
-            monthlyAmount={monthlyAmount}
-            annualReturn={annualReturn}
-            finalAmount={finalAmount}
-            totalContributed={totalContributed}
-            totalGrowth={totalGrowth}
-            showAdvancedContributions={showAdvancedContributions}
-            contributionSchedule={contributionSchedule}
-          />
         </div>
       </section>
 
