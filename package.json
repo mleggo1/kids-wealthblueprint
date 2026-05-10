@@ -9,8 +9,9 @@
     "preview": "vite preview --host"
   },
   "dependencies": {
-    "html2canvas": "file:html2canvas.tgz",
-    "jspdf": "file:jspdf.tgz",
+    "dompurify": "^3.2.4",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "recharts": "^2.12.3"
