@@ -870,7 +870,7 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
-                      💡 Investing 101 (kid-friendly)
+                      💡 Investing 101
                     </h3>
                     <button
                       onClick={() => setShowEducationalSection(!showEducationalSection)}
@@ -885,77 +885,70 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
                   </div>
                   
                   {showEducationalSection && (
-                    <div className="animate-in slide-in-from-top-2 duration-200 space-y-1.5 sm:space-y-2">
-                  
-                  {/* What is Investing */}
-                  <div className="bg-blue-50 border border-blue-300 rounded-lg p-1.5 sm:p-2 mb-1 sm:mb-1.5">
-                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 mb-0.5">🤔 What is investing?</h4>
-                    <p className="text-xs text-gray-700 leading-snug mb-1">
-                      <strong>Investing</strong> means letting your money work while you sleep — kind of like XP that earns more XP. 
-                      People often buy tiny slices of lots of companies at once (through something called a fund) instead of betting on one company like a video game skin gamble.
-                    </p>
-                    <p className="text-xs text-gray-700 leading-snug">
-                      <strong>Example:</strong> $100 in a piggy bank is still $100 next year. In this <em>educational</em> chart, if money grew {annualReturn}% in a year, 
-                      that $100 would be more like <strong className="text-green-700">${Math.round(100 * (1 + annualReturn / 100))}</strong> — the extra is growth, not magic (real life bounces up and down).
-                    </p>
-                  </div>
-                  
-                  <p className="text-xs text-gray-700 leading-snug mb-1">
-                    The <strong className="text-green-700">Return %</strong> slider is pretend growth per year so you can see how the lines move. Real markets are messier!
-                  </p>
-                  
-                  <div className="bg-white/80 rounded-lg p-1.5 sm:p-2 border border-green-300 mb-1 sm:mb-1.5">
-                    <div className="space-y-1.5">
-                      <div className="flex items-start gap-1.5">
-                        <span className="text-lg flex-shrink-0">🐷</span>
-                        <div className="min-w-0">
-                          <p className="font-bold text-gray-900 text-xs">Just Saving (Piggy Bank):</p>
-                          <p className="text-xs text-gray-700">
-                            Your ${(monthlyAmount * 12).toLocaleString()}/year stays ${(monthlyAmount * 12).toLocaleString()}. No growth. 😴
-                          </p>
-                        </div>
+                    <div className="animate-in slide-in-from-top-2 duration-200 space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-700 leading-relaxed">
+                      <div className="bg-blue-50 border border-blue-300 rounded-lg p-2.5 sm:p-3">
+                        <h4 className="font-bold text-gray-900 mb-1.5">🤔 What is investing?</h4>
+                        <p className="mb-2">
+                          <strong>Investing</strong> means putting money into things that have the chance to grow over time.
+                        </p>
+                        <p>
+                          Instead of trying to pick one winning company, many people invest in a <strong>fund</strong>.
+                          A fund can own small pieces of many different companies at once, which helps spread the risk.
+                        </p>
                       </div>
-                      
-                      <div className="flex items-start gap-1.5">
-                        <span className="text-lg flex-shrink-0">🚀</span>
-                        <div className="min-w-0">
-                          <p className="font-bold text-green-700 text-xs">Same numbers, but invested (this chart&apos;s rules):</p>
-                          {(() => {
-                            const yearlyInvestment = monthlyAmount * 12;
-                            const afterOneYear = yearlyInvestment * (1 + annualReturn / 100);
-                            const growth = yearlyInvestment * annualReturn / 100;
-                            
-                            const data20Years = calculateCompound(0, monthlyAmount, 20, annualReturn, 0);
-                            const after20Years = data20Years[data20Years.length - 1]?.total || 0;
-                            
-                            const data30Years = calculateCompound(0, monthlyAmount, 30, annualReturn, 0);
-                            const after30Years = data30Years[data30Years.length - 1]?.total || 0;
-                            
-                            return (
-                              <>
-                                <p className="text-xs text-gray-700 mb-1">
-                                  In this <strong>made-up math world</strong>, <strong>${yearlyInvestment.toLocaleString()}</strong> a year (${monthlyAmount.toLocaleString()}/mo × 12) at {annualReturn}% becomes about{' '}
-                                  <strong className="text-green-700">${Math.round(afterOneYear).toLocaleString()}</strong> after a year — extra{' '}
-                                  <strong className="text-green-700">${Math.round(growth).toLocaleString()}</strong> on top of what you put in. 🎉
-                                </p>
-                                <p className="text-xs text-gray-700">
-                                  Keep the story going: about <strong className="text-green-700">${after20Years.toLocaleString()}</strong> after 20 years and{' '}
-                                  <strong className="text-green-700">${after30Years.toLocaleString()}</strong> after 30 in this demo — not a real forecast! 🚀
-                                </p>
-                              </>
-                            );
-                          })()}
-                        </div>
+
+                      <div className="bg-white/90 rounded-lg p-2.5 sm:p-3 border border-green-300">
+                        <p className="font-bold text-gray-900 mb-1.5">Example:</p>
+                        <ul className="space-y-1.5 list-none">
+                          <li>
+                            If you keep <strong>$100</strong> in a piggy bank, it will usually still be about{' '}
+                            <strong>$100</strong> next year.
+                          </li>
+                          <li>
+                            But if that <strong>$100</strong> was invested and grew by{' '}
+                            <strong>{annualReturn}%</strong> in one year, it would become about{' '}
+                            <strong className="text-green-700">
+                              ${Math.round(100 * (1 + annualReturn / 100)).toLocaleString()}
+                            </strong>
+                            .
+                          </li>
+                          <li>
+                            The extra{' '}
+                            <strong className="text-green-700">
+                              ${Math.round(100 * (annualReturn / 100)).toLocaleString()}
+                            </strong>{' '}
+                            is called <strong>growth</strong>.
+                          </li>
+                        </ul>
                       </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-yellow-50 border-l-2 border-yellow-400 rounded-r p-1.5 sm:p-2">
-                    <p className="text-xs text-gray-800 font-semibold">
-                      💰 <strong>The cool part:</strong> growth can stack on top of growth — that&apos;s <strong className="text-green-700">compounding</strong>. 
-                      Watch the blue line bend upward in the chart. In real life it won&apos;t be this smooth, but the idea is real: time + steady saving = powerful. ✨
-                    </p>
-                  </div>
+
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2.5 sm:p-3">
+                        <p className="mb-2">
+                          Over many years, growth can start earning more growth. This is called{' '}
+                          <strong className="text-green-700">compounding</strong>.
+                        </p>
+                        <p className="mb-2">
+                          For example, if money keeps growing over time, the original $100 can become much more by the
+                          future age you choose. The longer the money has to grow, the more powerful compounding can
+                          become.
+                        </p>
+                        <p>
+                          In this educational chart — from age <strong>{startAge}</strong> to future age{' '}
+                          <strong>{targetAge}</strong> — the blue line shows about{' '}
+                          <strong className="text-green-700">${finalAmount.toLocaleString()}</strong> with your current
+                          settings (${monthlyAmount.toLocaleString()}/month at {annualReturn}% per year). That helps
+                          illustrate what steady saving and growth could look like over that timeline.
+                        </p>
+                      </div>
+
+                      <div className="bg-amber-50 border-l-4 border-amber-400 rounded-r-lg p-2.5 sm:p-3">
+                        <p className="font-semibold text-gray-900 mb-1">Important note</p>
+                        <p className="text-gray-800">
+                          Investing is not magic, and it does not grow in a straight line every year. In real life,
+                          investments go up and down. This chart is only an educational example to show how long-term
+                          growth and compounding can work — it is not a promise or financial advice.
+                        </p>
+                      </div>
                     </div>
                   )}
                 </div>
