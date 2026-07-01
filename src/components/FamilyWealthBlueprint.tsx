@@ -380,7 +380,7 @@ const FamilyWealthBlueprint: React.FC<FamilyWealthBlueprintProps> = ({ pdfExport
           {showWhyThisMatters && (
             <div className="max-w-4xl mx-auto space-y-2 text-base text-gray-700 leading-relaxed animate-in slide-in-from-top-2 duration-200">
               <p>
-                If you're in your 30s and new to investing, you're not alone. Most people wish they had started earlier, but the good news is that it's never too late to begin building wealth. This blueprint gives you a clear, simple path forward.
+                Wherever you are in life, building wealth can feel confusing, overwhelming, or something you wish you had started sooner. The good news is that it is never too late — or too early — to take control of your financial future.
               </p>
               
               <p className="text-lg font-semibold text-gray-900">
