@@ -83,7 +83,7 @@ function App() {
                     <span className="min-w-0 flex flex-col sm:items-center leading-tight">
                       <span className="text-[11px] sm:text-sm font-extrabold tracking-tight">Kids</span>
                       <span className="text-[7px] sm:text-[9px] font-bold uppercase tracking-wide opacity-85">
-                        Ages 8–15
+                        Ages 0–18
                       </span>
                     </span>
                   </button>

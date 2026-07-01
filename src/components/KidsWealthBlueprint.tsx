@@ -14,10 +14,10 @@ import { buildKidsReportHtml } from './wealthReport/kidsReportHtml';
 import { captureElementAsPngDataUrl } from './wealthReport/captureChartForPdf';
 import { exportReportToPdf } from './wealthReport/openReportWindow';
 
-/** Tweens & early teens — slider defaults; text field can go slightly outside for demos. */
-const KID_AGE_MIN = 8;
-const KID_AGE_MAX = 15;
-const KID_TARGET_AGE_MAX = 40;
+/** Child or young person — current age 0–18; future projection age up to 110. */
+const CHILD_AGE_MIN = 0;
+const CHILD_AGE_MAX = 18;
+const FUTURE_AGE_MAX = 110;
 
 // Simple icon components (can be replaced with actual SVGs later)
 const Icon = ({ emoji, className = '' }: { emoji: string; className?: string }) => (
@@ -96,16 +96,16 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
   }, []);
 
   // Interactive chart state
-  const [startAge, setStartAge] = useState(11);
+  const [startAge, setStartAge] = useState(5);
   const [initialInvestment, setInitialInvestment] = useState(0);
   const [monthlyAmount, setMonthlyAmount] = useState(50);
   const [annualReturn, setAnnualReturn] = useState(8.0);
-  const [targetAge, setTargetAge] = useState(22);
+  const [targetAge, setTargetAge] = useState(18);
 
-  const startAgeSliderMax = Math.min(KID_AGE_MAX, Math.max(KID_AGE_MIN, targetAge - 1));
+  const startAgeSliderMax = Math.min(CHILD_AGE_MAX, Math.max(CHILD_AGE_MIN, targetAge - 1));
   useEffect(() => {
-    const max = Math.min(KID_AGE_MAX, Math.max(KID_AGE_MIN, targetAge - 1));
-    setStartAge((a) => Math.max(KID_AGE_MIN, Math.min(max, a)));
+    const max = Math.min(CHILD_AGE_MAX, Math.max(CHILD_AGE_MIN, targetAge - 1));
+    setStartAge((a) => Math.max(CHILD_AGE_MIN, Math.min(max, a)));
   }, [targetAge]);
   const [monthlyInputFocused, setMonthlyInputFocused] = useState(false);
   const [initialInvestmentFocused, setInitialInvestmentFocused] = useState(false);
@@ -307,11 +307,11 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
       </div>
       
       <div className="relative z-10">
-      {/* Hero Section — written for ages ~8–15 */}
+      {/* Hero Section */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6 text-center">
         <div className="mb-4">
           <span className="inline-block rounded-full bg-fuchsia-100 text-fuchsia-800 text-xs sm:text-sm font-bold px-3 py-1 border border-fuchsia-200">
-            For kids about 8–15 · grown-ups welcome too
+            For children &amp; young people · ages 0–18 · parents welcome
           </span>
         </div>
         <div className="mb-6">
@@ -323,21 +323,16 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
           <div className="h-1 w-32 bg-gradient-to-r from-fuchsia-500 via-purple-500 to-indigo-500 mx-auto rounded-full"></div>
         </div>
 
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 max-w-2xl mx-auto">
-          Level up your future money — starting right now
-        </h2>
-        <p className="text-base sm:text-lg text-gray-700 mb-2 max-w-2xl mx-auto leading-relaxed">
-          Ever wonder how pocket money, birthday cash, or a small amount saved each month could grow over time?
-          This page is your cheat code: play with the sliders, watch the graph, and see why <strong>starting early</strong> is a superpower.
-        </p>
-        <p className="text-sm text-gray-600 mb-6 max-w-xl mx-auto">
-          Big-money accounts need a trusted adult — but <em>you</em> can still learn how it all works.
+        <p className="text-base sm:text-lg text-gray-700 mb-6 max-w-3xl mx-auto leading-relaxed">
+          Help build a strong financial foundation for a child or young person, from birth through to adulthood and beyond.
+          Choose their current age, select a future age to project towards, and see how small actions today can grow into
+          meaningful wealth over time.
         </p>
         <a
           href="#watch-money-grow"
           className="inline-block bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-semibold py-3 px-8 rounded-xl text-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 ripple-effect"
         >
-          See the money grow
+          Explore the projection
         </a>
       </section>
 
@@ -345,7 +340,7 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg border border-gray-100 card-interactive">
           <div className="flex items-center justify-between gap-2 mb-3">
-            <h2 className="text-xl font-bold text-gray-900">Why this is cool (for you)</h2>
+            <h2 className="text-xl font-bold text-gray-900">Why this matters</h2>
             <button
               onClick={() => setShowWhyThisMatters(!showWhyThisMatters)}
               className="flex-shrink-0 text-gray-700 hover:text-gray-800 font-medium text-sm px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors flex items-center gap-1"
@@ -361,33 +356,34 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
           {showWhyThisMatters && (
             <div className="max-w-4xl mx-auto space-y-3 text-base text-gray-700 leading-relaxed animate-in slide-in-from-top-2 duration-200">
               <p>
-                Most grown-ups say they wish someone had shown them this stuff earlier. You&apos;re getting a head start: 
-                how saving a little, often, can team up with time to do something amazing.
+                Whether you&apos;re planning for a newborn, a toddler, a school-age child, or a teenager — starting early
+                gives their future self more time for small, steady habits to add up.
               </p>
 
               <p className="text-lg font-semibold text-gray-900">
-                You don&apos;t need to be a math genius — just curious.
+                You don&apos;t need to be a finance expert — just curious and consistent.
               </p>
 
               <p>
-                The big idea is simple. No picking &quot;hot&quot; stocks on your phone. Instead, think:
+                The big idea is simple. No hype, no day-trading. Instead, think:
               </p>
 
               <ul className="space-y-1 list-disc list-inside ml-4 text-base">
-                <li><strong>Start early</strong> — even small amounts count</li>
-                <li><strong>Keep going</strong> — like leveling up a character, but with dollars</li>
+                <li><strong>Start early</strong> — even small amounts count, from birth onwards</li>
+                <li><strong>Keep going</strong> — regular saving or investing builds a strong habit</li>
                 <li><strong>Let time work</strong> — that&apos;s compounding (the chart shows it)</li>
               </ul>
 
               <p>
-                Learning this now means money feels less scary later — whether you&apos;re saving for a console, 
-                a trip, study, or something way down the road. It&apos;s about <em>options</em>, not stress.
+                Parents can explore on a child&apos;s behalf; older teens can use this themselves. Either way, it&apos;s about
+                giving a child a strong financial start in life — and more options for their future.
               </p>
 
               <div className="bg-fuchsia-50 rounded-xl p-3 border-l-4 border-fuchsia-600 mt-2">
-                <p className="text-lg font-semibold text-gray-900 mb-0.5">For the adults in the room</p>
+                <p className="text-lg font-semibold text-gray-900 mb-0.5">For parents &amp; carers</p>
                 <p className="text-base text-gray-800">
-                  Use this page together: you handle accounts and products; they build confidence and habits. Everyone wins.
+                  Use this together: you handle accounts and products; they build confidence and habits. Real accounts for
+                  children usually need a trusted adult — this tool is here to teach the ideas first.
                 </p>
               </div>
             </div>
@@ -399,32 +395,33 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
       <section id="watch-money-grow" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="bg-gradient-to-br from-fuchsia-50/90 via-purple-50/90 to-indigo-50/90 backdrop-blur-sm rounded-3xl p-6 sm:p-8 shadow-xl border-2 border-fuchsia-100 card-interactive">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 text-center">
-            🚀 Watch your money grow (like a game graph)
+            Watch wealth grow over time
           </h2>
           <p className="text-center text-gray-700 mb-4 sm:mb-6 text-base sm:text-lg font-medium max-w-2xl mx-auto">
-            Move the sliders — the lines show what <em>could</em> happen over time. It&apos;s a learning toy, not a promise of real life (markets bounce around!).
+            Set the child&apos;s current age and a future age, then adjust the amounts — the chart shows an illustrative
+            projection, not a guarantee (real markets move up and down).
           </p>
 
           {/* Interactive Controls */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-6 items-start">
             {/* Current Age Card - First */}
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-purple-200 card-interactive ripple-effect flex flex-col">
-              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-1 min-h-[2.5rem]">
-                🎂 How old are you?
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-1 leading-snug">
+                Their current age
               </label>
-              <p className="text-xs text-gray-500 mb-2">Slider: about {KID_AGE_MIN}–{KID_AGE_MAX} (you can type other ages too)</p>
+              <p className="text-xs text-gray-500 mb-2 leading-snug">From birth (0) to 18 — for babies, children, and teens</p>
               <input
                 type="range"
-                min={KID_AGE_MIN}
+                min={CHILD_AGE_MIN}
                 max={startAgeSliderMax}
                 step="1"
                 value={startAge}
                 onChange={(e) => {
                   const age = Number(e.target.value);
-                  const clampedAge = Math.max(KID_AGE_MIN, Math.min(startAgeSliderMax, age));
+                  const clampedAge = Math.max(CHILD_AGE_MIN, Math.min(startAgeSliderMax, age));
                   setStartAge(clampedAge);
                   if (clampedAge >= targetAge) {
-                    setTargetAge(clampedAge + 1);
+                    setTargetAge(Math.min(FUTURE_AGE_MAX, clampedAge + 1));
                   }
                 }}
                 className="w-full h-4 bg-purple-200 rounded-lg appearance-none cursor-pointer accent-purple-600 mb-3 transition-all duration-300 hover:accent-purple-700"
@@ -438,26 +435,29 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
                   onChange={(e) => {
                     const numericValue = e.target.value.replace(/[^0-9]/g, '');
                     if (numericValue === '') {
-                      setStartAge(KID_AGE_MIN);
+                      setStartAge(CHILD_AGE_MIN);
                     } else {
                       const age = Number(numericValue);
-                      if (!isNaN(age) && age >= 0 && age <= 120) {
-                        const maxAge = Math.max(KID_AGE_MIN, targetAge - 1);
+                      if (!isNaN(age) && age >= CHILD_AGE_MIN && age <= CHILD_AGE_MAX) {
+                        const maxAge = Math.min(CHILD_AGE_MAX, targetAge - 1);
                         const clampedAge = Math.min(age, maxAge);
                         setStartAge(clampedAge);
                         if (clampedAge >= targetAge) {
-                          setTargetAge(Math.min(KID_TARGET_AGE_MAX, clampedAge + 1));
+                          setTargetAge(Math.min(FUTURE_AGE_MAX, clampedAge + 1));
                         }
                       }
                     }
                   }}
                   onBlur={(e) => {
-                    const raw = Number(e.target.value) || KID_AGE_MIN;
-                    const maxAge = Math.max(KID_AGE_MIN, Math.min(KID_AGE_MAX, targetAge - 1));
-                    const clampedAge = Math.max(KID_AGE_MIN, Math.min(maxAge, raw));
+                    const raw = Number(e.target.value);
+                    const maxAge = Math.min(CHILD_AGE_MAX, Math.max(CHILD_AGE_MIN, targetAge - 1));
+                    const clampedAge = Math.max(
+                      CHILD_AGE_MIN,
+                      Math.min(maxAge, Number.isFinite(raw) ? raw : CHILD_AGE_MIN)
+                    );
                     setStartAge(clampedAge);
                     if (clampedAge >= targetAge) {
-                      setTargetAge(Math.min(KID_TARGET_AGE_MAX, clampedAge + 1));
+                      setTargetAge(Math.min(FUTURE_AGE_MAX, clampedAge + 1));
                     }
                   }}
                   onKeyDown={(e) => {
@@ -469,9 +469,11 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
                 />
                 <span className="text-sm text-gray-500 flex-shrink-0">yrs</span>
               </div>
+              <div className="flex justify-between mt-2 text-[10px] sm:text-xs text-gray-500">
+                <span>{CHILD_AGE_MIN}</span>
+                <span>{CHILD_AGE_MAX}</span>
+              </div>
             </div>
-
-            {/* Initial Investment Card */}
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-teal-200 card-interactive ripple-effect flex flex-col">
               <label className="block text-sm sm:text-base font-bold text-gray-800 mb-1 min-h-[2.5rem]">
                 🎁 Starting stash
@@ -606,7 +608,7 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
                                 const numericValue = e.target.value.replace(/[^0-9]/g, '');
                                 if (numericValue === '') {
                                   const updated = [...contributionSchedule];
-                                  updated[index] = { ...updated[index], age: Math.max(KID_AGE_MIN, startAge) };
+                                  updated[index] = { ...updated[index], age: Math.max(CHILD_AGE_MIN, startAge) };
                                   setContributionSchedule(updated);
                                 } else {
                                   const age = Number(numericValue);
@@ -795,20 +797,22 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
             </div>
 
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border-2 border-orange-200 card-interactive ripple-effect flex flex-col">
-              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-1 min-h-[2.5rem]">
-                🎯 Future-you age
+              <label className="block text-sm sm:text-base font-bold text-gray-800 mb-1 leading-snug">
+                Choose their future age
               </label>
-              <p className="text-xs text-gray-500 mb-2">How old when you check the result? (e.g. finishing school)</p>
+              <p className="text-xs text-gray-500 mb-2 leading-snug">
+                Any future age you want to plan towards — 18, 21, 30, 65, 100 or beyond (must be older than their current age).
+              </p>
               <input
                 type="range"
                 min={startAge + 1}
-                max={KID_TARGET_AGE_MAX}
+                max={FUTURE_AGE_MAX}
                 step="1"
                 value={targetAge}
                 onChange={(e) => {
                   const age = Number(e.target.value);
                   const minAge = startAge + 1;
-                  setTargetAge(Math.max(minAge, Math.min(KID_TARGET_AGE_MAX, age)));
+                  setTargetAge(Math.max(minAge, Math.min(FUTURE_AGE_MAX, age)));
                 }}
                 className="w-full h-4 bg-orange-200 rounded-lg appearance-none cursor-pointer accent-orange-600 mb-3 transition-all duration-300 hover:accent-orange-700"
               />
@@ -816,6 +820,7 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
                 <span className="text-sm text-gray-500 flex-shrink-0 w-4"></span>
                 <input
                   type="text"
+                  inputMode="numeric"
                   value={targetAge}
                   onChange={(e) => {
                     const numericValue = e.target.value.replace(/[^0-9]/g, '');
@@ -823,15 +828,18 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
                       setTargetAge(startAge + 1);
                     } else {
                       const age = Number(numericValue);
-                      if (!isNaN(age) && age > startAge) {
-                        setTargetAge(Math.min(KID_TARGET_AGE_MAX, age));
+                      if (!isNaN(age) && age > startAge && age <= FUTURE_AGE_MAX) {
+                        setTargetAge(age);
                       }
                     }
                   }}
                   onBlur={(e) => {
-                    const age = Number(e.target.value) || (startAge + 1);
+                    const age = Number(e.target.value);
                     const minAge = startAge + 1;
-                    const clampedAge = Math.max(minAge, Math.min(KID_TARGET_AGE_MAX, age));
+                    const clampedAge = Math.max(
+                      minAge,
+                      Math.min(FUTURE_AGE_MAX, Number.isFinite(age) ? age : minAge)
+                    );
                     setTargetAge(clampedAge);
                   }}
                   onKeyDown={(e) => {
@@ -841,7 +849,11 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
                   }}
                   className="flex-1 min-w-0 text-xl sm:text-2xl font-bold text-orange-600 text-center border-2 border-orange-300 rounded-lg py-2 px-2 h-12 focus:outline-none focus:ring-2 focus:ring-orange-500 input-interactive"
                 />
-                <span className="text-sm text-gray-500 flex-shrink-0">years</span>
+                <span className="text-sm text-gray-500 flex-shrink-0">yrs</span>
+              </div>
+              <div className="flex justify-between mt-2 text-[10px] sm:text-xs text-gray-500">
+                <span>{startAge + 1}</span>
+                <span>{FUTURE_AGE_MAX}</span>
               </div>
             </div>
           </div>
@@ -875,7 +887,7 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
                   {showEducationalSection && (
                     <div className="animate-in slide-in-from-top-2 duration-200 space-y-1.5 sm:space-y-2">
                   
-                  {/* What is Investing - ages ~8–15 */}
+                  {/* What is Investing */}
                   <div className="bg-blue-50 border border-blue-300 rounded-lg p-1.5 sm:p-2 mb-1 sm:mb-1.5">
                     <h4 className="text-xs sm:text-sm font-bold text-gray-900 mb-0.5">🤔 What is investing?</h4>
                     <p className="text-xs text-gray-700 leading-snug mb-1">
@@ -1090,7 +1102,7 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
                   <div className={`${isMobile ? 'text-base sm:text-lg' : 'text-lg sm:text-xl'} font-extrabold mb-0.5 leading-tight`}>
                     ${finalAmount >= 1000000 ? `${(finalAmount / 1000000).toFixed(1)}M` : finalAmount >= 1000 ? `${(finalAmount / 1000).toFixed(0)}k` : finalAmount.toLocaleString()}
                   </div>
-                  <div className={`${isMobile ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} font-semibold opacity-95 leading-tight`}>Total at Age {targetAge}</div>
+                  <div className={`${isMobile ? 'text-[9px] sm:text-[10px]' : 'text-[10px] sm:text-xs'} font-semibold opacity-95 leading-tight`}>At future age {targetAge}</div>
                 </div>
                 <div 
                   className="bg-gradient-to-br from-green-500 via-green-600 to-green-700 rounded-xl p-2 sm:p-2.5 shadow-2xl text-center text-white transform hover:scale-105 hover:shadow-3xl hover:z-20 transition-all duration-300 cursor-pointer border-2 border-white/40 hover:border-white/60 backdrop-blur-md flex-1"
@@ -1118,10 +1130,11 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
 
           <div className="bg-yellow-50 border-2 border-yellow-300 rounded-2xl p-4 sm:p-6 text-center">
             <p className="text-lg sm:text-2xl font-bold text-gray-800 mb-2">
-              🎉 In this story, age <span className="text-purple-600">{startAge}</span> + <span className="text-blue-600">${monthlyAmount}/month</span>
+              Starting at age <span className="text-purple-600">{startAge}</span> with{' '}
+              <span className="text-blue-600">${monthlyAmount}/month</span>
             </p>
             <p className="text-base sm:text-xl text-gray-700">
-              By age <span className="text-orange-600 font-bold">{targetAge}</span>, the graph shows about{' '}
+              By future age <span className="text-orange-600 font-bold">{targetAge}</span>, the graph shows about{' '}
               <span className="text-blue-600 font-bold text-2xl sm:text-3xl">${finalAmount.toLocaleString()}</span>
             </p>
             <p className="text-sm sm:text-lg text-gray-600 mt-3">
@@ -1132,13 +1145,14 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
         </div>
       </section>
 
-      {/* 7 ideas — for kids ~8–15 (grown-ups help with the real accounts) */}
+      {/* Building blocks — from birth to adulthood */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 text-center">
-          7 power-ups for future-you
+          7 building blocks for their future
         </h2>
         <p className="text-center text-gray-600 max-w-2xl mx-auto mb-10 text-sm sm:text-base">
-          Think of these as levels in a game. Some need a parent or carer — that&apos;s normal. The win is understanding, not rushing.
+          Simple ideas for children and young people from birth to 18 — and for parents planning on their behalf.
+          Some steps need a parent or carer; the goal is understanding and a strong start, not rushing.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-300 border border-fuchsia-100 card-interactive">
@@ -1228,7 +1242,8 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
               The curve gets wild later — that&apos;s the point
             </h3>
             <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
-              Early years feel flat. Later, the same habits matter more because time stacked up. You&apos;re not &quot;behind&quot; at 12 or 14 — you&apos;re early to the idea.
+              Early years can feel slow on the chart. Later, the same habits matter more because time has stacked up.
+              Whether they&apos;re a baby, a child, or a teen — starting the idea early is what counts.
             </p>
           </div>
         </div>
@@ -1237,9 +1252,9 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
       {/* Compounding Example Highlight Box */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-4 sm:p-6 md:p-8 lg:p-12 shadow-2xl text-white">
-          <h2 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 sm:mb-4 md:mb-6 text-center">💰 Starting early is your cheat code</h2>
+          <h2 className="text-xl sm:text-2xl md:text-4xl font-bold mb-3 sm:mb-4 md:mb-6 text-center">Starting early makes a real difference</h2>
           <p className="text-base sm:text-lg md:text-2xl leading-relaxed text-center mb-4 sm:mb-6 md:mb-8 font-semibold">
-            Same energy as grinding a save file — but for future money. 🚀
+            Small, steady steps today can mean a stronger financial foundation for a child or young person. 🚀
           </p>
           
           {/* Simple visual bars - stack on mobile, horizontal on desktop */}
@@ -1269,7 +1284,7 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
       {/* Quick recap */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-          Your recap (stick this on a mental sticker)
+          Quick recap
         </h2>
         <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 sm:p-12 shadow-lg border border-fuchsia-100 card-interactive">
           <ul className="space-y-4 text-base sm:text-lg text-gray-700 max-w-2xl mx-auto">
@@ -1295,7 +1310,7 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
             </li>
             <li className="flex items-start">
               <span className="text-fuchsia-500 mr-3 text-2xl">✓</span>
-              <span>You&apos;re not late — you&apos;re learning early</span>
+              <span>It&apos;s never too early — or too late — to start the conversation about money</span>
             </li>
           </ul>
           <p className="text-center text-lg sm:text-xl text-gray-800 font-semibold mt-8 pt-8 border-t border-gray-200">
@@ -1308,11 +1323,11 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
       <section id="kids-cta" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="bg-gradient-to-br from-fuchsia-600 via-purple-600 to-indigo-600 rounded-2xl p-8 sm:p-12 shadow-2xl text-white text-center">
           <h2 className="text-2xl sm:text-4xl font-bold mb-4">
-            Grown-ups: want help explaining this IRL?
+            Want help planning for a child or young person?
           </h2>
           <p className="text-base sm:text-xl leading-relaxed mb-8 max-w-2xl mx-auto opacity-95">
-            Kids can explore here for free. If you&apos;d like a calm, step-by-step walkthrough for your family — 
-            no jargon, no pressure — we can book a chat.
+            Explore the ideas here at your own pace. If you&apos;d like a calm, step-by-step walkthrough for your family —
+            from birth through the teen years — no jargon, no pressure — we can book a chat.
           </p>
           <a
             href="https://wealthbydesign.vercel.app/contact"

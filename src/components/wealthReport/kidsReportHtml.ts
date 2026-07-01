@@ -102,11 +102,11 @@ export function buildKidsReportHtml(input: KidsReportInput): string {
     <div class="hero">
       <h1>Kids Wealth Blueprint</h1>
       <p>Learning report · ${esc(input.generatedAt)}</p>
-      <span class="badge">For ages ~8–15 · educational illustration</span>
+      <span class="badge">For children &amp; young people · ages 0–18 · educational illustration</span>
     </div>
 
     <div class="highlight">
-      <div class="stat"><div class="n">$${input.finalAmount.toLocaleString()}</div><div class="l">Total at age ${input.targetAge}</div></div>
+      <div class="stat"><div class="n">$${input.finalAmount.toLocaleString()}</div><div class="l">Total at future age ${input.targetAge}</div></div>
       <div class="stat"><div class="n">$${input.totalContributed.toLocaleString()}</div><div class="l">Total added</div></div>
       <div class="stat"><div class="n">$${input.totalGrowth.toLocaleString()}</div><div class="l">Example growth</div></div>
     </div>
@@ -124,8 +124,8 @@ export function buildKidsReportHtml(input: KidsReportInput): string {
     <div class="card">
       <h2>What we assumed</h2>
       <div class="grid">
-        <div><strong>Your age (start)</strong>${input.startAge}</div>
-        <div><strong>Future-you age</strong>${input.targetAge}</div>
+        <div><strong>Current age</strong>${input.startAge}</div>
+        <div><strong>Future age</strong>${input.targetAge}</div>
         <div><strong>Starting stash</strong>$${input.initialInvestment.toLocaleString()}</div>
         <div><strong>Return (p.a.)</strong>${input.annualReturn}%</div>
         <div><strong>Each month</strong>$${input.monthlyAmount.toLocaleString()}</div>
