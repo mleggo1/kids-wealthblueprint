@@ -409,7 +409,7 @@ const KidsWealthBlueprint: React.FC<KidsWealthBlueprintProps> = ({ pdfExportRef 
               <label className="block text-sm sm:text-base font-bold text-gray-800 mb-1 leading-snug">
                 Their current age
               </label>
-              <p className="text-xs text-gray-500 mb-2 leading-snug">From birth (0) to 18 — for babies, children, and teens</p>
+              <p className="text-xs text-gray-500 mb-2 leading-snug">From birth to 18 — for babies, children, and teens</p>
               <input
                 type="range"
                 min={CHILD_AGE_MIN}
